@@ -10,16 +10,21 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "migrate:dev": "supabase db diff -f",
+    "migrate:apply": "supabase db push",
+    "migrate:status": "supabase db remote commit status"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@supabase/supabase-js": "^2.49.4",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "winston": "^3.17.0"
+    "winston": "^3.17.0",
+    "zod": "^3.24.4"
   },
   "devDependencies": {
     "@types/express": "^5.0.1",

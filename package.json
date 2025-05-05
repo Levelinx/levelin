@@ -1,0 +1,24 @@
+{
+    "name": "levelin",
+    "version": "1.0.0",
+    "private": true,
+    "workspaces": [
+        "frontend",
+        "backend",
+        "website"
+    ],
+    "scripts": {
+        "dev:frontend": "cd frontend && pnpm run dev",
+        "dev:backend": "cd backend && pnpm run dev",
+        "dev:website": "cd website && pnpm run dev",
+        "dev": "concurrently \"pnpm run dev:frontend\" \"pnpm run dev:backend\" \"pnpm run dev:website\"",
+        "install:all": "pnpm install && pnpm run install:frontend && pnpm run install:backend && pnpm run install:website",
+        "install:frontend": "cd frontend && pnpm install",
+        "install:backend": "cd backend && pnpm install",
+        "install:website": "cd website && pnpm install"
+    },
+    "devDependencies": {
+        "concurrently": "^8.2.0"
+    },
+    "packageManager": "pnpm@9.15.1+sha512.1acb565e6193efbebda772702950469150cf12bcc764262e7587e71d19dc98a423dff9536e57ea44c49bdf790ff694e83c27be5faa23d67e0c033b583be4bfcf"
+}

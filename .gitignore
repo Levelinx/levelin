@@ -1,0 +1,26 @@
+# Node
+node_modules/
+dist/
+coverage/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+
+# Vercel
+.vercel/
+
+# Project-specific
+frontend/.next/
+frontend/out/
+website/.next/
+website/out/
+
+# IDE
+.vscode/
+.idea/
