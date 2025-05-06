@@ -22,8 +22,8 @@ const TanstackProvider: React.FC<{ children: React.ReactNode }> = ({ children })
   return (
     <QueryClientProvider client={queryClient}>
       <PrivyProvider
-      appId="your-privy-app-id"
-      clientId="your-app-client-id"
+      appId="cmabmawrc00fdl80nh8wxiqur"
+      clientId="client-WY6LFzQxDD9JgtMq9Go3aNKSGZuBAVnpfod6u5rDro6pS"
       config={{
         // Create embedded wallets for users who don't have a wallet
         embeddedWallets: {
