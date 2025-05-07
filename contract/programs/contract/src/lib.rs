@@ -7,6 +7,18 @@ pub mod contract {
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
+        // Check if the program has already been initialized by trying to find the PDA
+        let (expected_authority_pda, _) = Pubkey::find_program_address(
+            &[b"authority"],
+            ctx.program_id
+        );
+        
+        // Only allow initialization if the account matches our expected PDA
+        require!(
+            ctx.accounts.program_authority.key() == expected_authority_pda,
+            ErrorCode::InvalidProgramAuthority
+        );
+        
         let program_authority = &mut ctx.accounts.program_authority;
         program_authority.authority = ctx.accounts.authority.key();
         
@@ -528,4 +540,7 @@ pub enum ErrorCode {
     
     #[msg("Insufficient reviews (need 5+)")]
     InsufficientReviews,
+
+    #[msg("Invalid program authority")]
+    InvalidProgramAuthority,
 }
