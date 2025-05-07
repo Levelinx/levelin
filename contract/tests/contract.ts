@@ -2,7 +2,7 @@ import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { Contract } from "../target/types/contract";
 import { expect } from "chai";
-import { Keypair, SystemProgram } from "@solana/web3.js";
+import { Keypair, SystemProgram, PublicKey } from "@solana/web3.js";
 
 describe("decentralized-proof-of-work", () => {
   // Configure the client to use the local cluster
@@ -11,10 +11,13 @@ describe("decentralized-proof-of-work", () => {
   const provider = anchor.getProvider();
   
   // Define keypairs for accounts
-  const programAuthorityKeypair = Keypair.generate();
   const userAccount = Keypair.generate();
   const domainAccount = Keypair.generate();
   const challengeAccount = Keypair.generate();
+  
+  // Program authority PDA
+  let programAuthorityPda: PublicKey;
+  let programAuthorityBump: number;
   
   // Test data
   const userName = "John Doe";
@@ -29,37 +32,52 @@ describe("decentralized-proof-of-work", () => {
   const oneWeekFromNow = new anchor.BN(Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60);
   
   before(async () => {
-    // Airdrop some SOL to the wallet for transaction fees
+    // Calculate the PDA for program authority
+    const [pda, bump] = await PublicKey.findProgramAddress(
+      [Buffer.from("PROGRAM_AUTHORITY")],
+      program.programId
+    );
+    programAuthorityPda = pda;
+    programAuthorityBump = bump;
+    
+    // Airdrop some SOL to the user account for transaction fees
     const signature = await provider.connection.requestAirdrop(
-      provider.wallet.publicKey,
+      userAccount.publicKey,
       2 * anchor.web3.LAMPORTS_PER_SOL
     );
     await provider.connection.confirmTransaction(signature);
+    
+    // Also airdrop to the wallet
+    const signature2 = await provider.connection.requestAirdrop(
+      provider.wallet.publicKey,
+      2 * anchor.web3.LAMPORTS_PER_SOL
+    );
+    await provider.connection.confirmTransaction(signature2);
   });
 
   it("Initializes the program", async () => {
     try {
-
       const tx = await program.methods
         .initialize()
         .accounts({
-          programAuthority: programAuthorityKeypair.publicKey,
+          // @ts-ignore
+          programAuthority: programAuthorityPda,
           authority: provider.wallet.publicKey,
           // @ts-ignore
           systemProgram: SystemProgram.programId,
         })
-        .signers([programAuthorityKeypair])
         .rpc();
       
       console.log("Initialize transaction signature", tx);
       
       // Fetch the program authority to confirm it was set correctly
       const programAuthority = await program.account.programAuthority.fetch(
-        programAuthorityKeypair.publicKey
+        programAuthorityPda
       );
       expect(programAuthority.authority.toString()).to.equal(
         provider.wallet.publicKey.toString()
       );
+      expect(programAuthority.isInitialized).to.equal(true);
     } catch (error) {
       console.error("Error in initialize:", error);
       throw error;
@@ -124,7 +142,7 @@ describe("decentralized-proof-of-work", () => {
         .createDomain(domainName, domainDescription)
         .accounts({
           domain: domainAccount.publicKey,
-          programAuthority: programAuthorityKeypair.publicKey,
+          programAuthority: programAuthorityPda,
           authority: provider.wallet.publicKey,
           // @ts-ignore
           systemProgram: SystemProgram.programId,
@@ -169,7 +187,7 @@ describe("decentralized-proof-of-work", () => {
     }
   });
   
-  it("Creates a challenge", async () => {
+  it("Creates a challenge and automatically assigns user as challenger", async () => {
     try {
       const tx = await program.methods
         .createChallenge(
@@ -181,7 +199,7 @@ describe("decentralized-proof-of-work", () => {
         .accounts({
           challenge: challengeAccount.publicKey,
           domain: domainAccount.publicKey,
-          programAuthority: programAuthorityKeypair.publicKey,
+          user: userAccount.publicKey,
           authority: provider.wallet.publicKey,
           // @ts-ignore
           systemProgram: SystemProgram.programId,
@@ -197,43 +215,24 @@ describe("decentralized-proof-of-work", () => {
       expect(challenge.description).to.equal(challengeDescription);
       expect(challenge.tokenFee.toNumber()).to.equal(tokenFee.toNumber());
       expect(challenge.deadline.toString()).to.equal(oneWeekFromNow.toString());
-      expect(challenge.challenger).to.equal(null);
-      expect(challenge.submissionUrl).to.equal(null);
-      expect(challenge.reviews.length).to.equal(0);
-      expect(challenge.isCompleted).to.equal(false);
-      expect(challenge.isFinalized).to.equal(false);
-    } catch (error) {
-      console.error("Error in create challenge:", error);
-      throw error;
-    }
-  });
-  
-  it("Takes on a challenge", async () => {
-    try {
-      const tx = await program.methods
-        .takeChallenge()
-        .accounts({
-          challenge: challengeAccount.publicKey,
-          user: userAccount.publicKey,
-          authority: provider.wallet.publicKey,
-        })
-        .rpc();
       
-      console.log("Take challenge transaction signature", tx);
-      
-      // Fetch the challenge account to confirm it was taken
-      const challenge = await program.account.challenge.fetch(challengeAccount.publicKey);
+      // Check that the challenger is automatically set
       if (challenge.challenger) {
         expect(challenge.challenger.toString()).to.equal(provider.wallet.publicKey.toString());
       } else {
         throw new Error("Challenger was not set properly");
       }
       
-      // Fetch the user account to confirm tokens were deducted
+      expect(challenge.submissionUrl).to.equal(null);
+      expect(challenge.reviews.length).to.equal(0);
+      expect(challenge.isCompleted).to.equal(false);
+      expect(challenge.isFinalized).to.equal(false);
+      
+      // Fetch the user account to confirm tokens were deducted during challenge creation
       const user = await program.account.user.fetch(userAccount.publicKey);
       expect(user.domains[0].tokenBalance.toNumber()).to.equal(100 - tokenFee.toNumber());
     } catch (error) {
-      console.error("Error in take challenge:", error);
+      console.error("Error in create challenge:", error);
       throw error;
     }
   });

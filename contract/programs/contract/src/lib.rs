@@ -7,8 +7,11 @@ pub mod contract {
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
+        // Create a deterministic PDA for the program authority
+        // This ensures there can only ever be one program_authority account
         let program_authority = &mut ctx.accounts.program_authority;
         program_authority.authority = ctx.accounts.authority.key();
+        program_authority.is_initialized = true;
         
         msg!("Program initialized with authority: {:?}", program_authority.authority);
         Ok(())
