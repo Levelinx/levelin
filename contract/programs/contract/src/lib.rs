@@ -7,18 +7,6 @@ pub mod contract {
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        // Check if the program has already been initialized by trying to find the PDA
-        let (expected_authority_pda, _) = Pubkey::find_program_address(
-            &[b"authority"],
-            ctx.program_id
-        );
-        
-        // Only allow initialization if the account matches our expected PDA
-        require!(
-            ctx.accounts.program_authority.key() == expected_authority_pda,
-            ErrorCode::InvalidProgramAuthority
-        );
-        
         let program_authority = &mut ctx.accounts.program_authority;
         program_authority.authority = ctx.accounts.authority.key();
         
@@ -73,6 +61,12 @@ pub mod contract {
         let domain = &mut ctx.accounts.domain;
         let program_authority = &ctx.accounts.program_authority;
         
+        // Check that the program has been initialized
+        require!(
+            program_authority.is_initialized,
+            ErrorCode::NotAuthorized
+        );
+        
         // Only the program authority can create domains
         require!(
             program_authority.authority == ctx.accounts.authority.key(),
@@ -118,69 +112,79 @@ pub mod contract {
     ) -> Result<()> {
         let challenge = &mut ctx.accounts.challenge;
         let domain = &ctx.accounts.domain;
-        
-        // Only the program authority can create challenges
-        let program_authority = &ctx.accounts.program_authority;
-        require!(
-            program_authority.authority == ctx.accounts.authority.key(),
-            ErrorCode::NotAuthorized
-        );
+        let user = &mut ctx.accounts.user;
         
         // Verify the domain exists
         require!(domain.name == domain_name, ErrorCode::DomainMismatch);
+        
+        // Verify the user is registered in the domain
+        let domain_index = user.domains
+            .iter()
+            .position(|d| d.name == domain_name)
+            .ok_or(ErrorCode::UserNotInDomain)?;
+        
+        // User must have at least the token fee in the domain to create a challenge
+        require!(
+            user.domains[domain_index].token_balance >= token_fee,
+            ErrorCode::InsufficientTokens
+        );
+        
+        // Deduct the token fee from the user
+        user.domains[domain_index].token_balance -= token_fee;
         
         challenge.domain = domain_name;
         challenge.description = description;
         challenge.token_fee = token_fee;
         challenge.deadline = deadline;
         challenge.creator = ctx.accounts.authority.key();
-        challenge.challenger = None;
+        // The creator is automatically the challenger
+        challenge.challenger = Some(ctx.accounts.authority.key());
         challenge.submission_url = None;
         challenge.reviews = Vec::new();
         challenge.is_completed = false;
         challenge.is_finalized = false;
         
-        msg!("Challenge created in domain: {}", challenge.domain);
+        msg!("Challenge created by user in domain: {}", challenge.domain);
         Ok(())
     }
 
-    pub fn take_challenge(
-        ctx: Context<TakeChallenge>,
-    ) -> Result<()> {
-        let challenge = &mut ctx.accounts.challenge;
-        let user = &mut ctx.accounts.user;
+    // pub fn take_challenge(
+    //     ctx: Context<TakeChallenge>,
+    // ) -> Result<()> {
+    //     let challenge = &mut ctx.accounts.challenge;
+    //     let user = &mut ctx.accounts.user;
         
-        // Check if the challenge is already taken
-        require!(challenge.challenger.is_none(), ErrorCode::ChallengeAlreadyTaken);
+    //     // Check if the challenge is already taken
+    //     require!(challenge.challenger.is_none(), ErrorCode::ChallengeAlreadyTaken);
         
-        // Check if the deadline has passed
-        let clock = Clock::get()?;
-        require!(
-            challenge.deadline > clock.unix_timestamp,
-            ErrorCode::DeadlinePassed
-        );
+    //     // Check if the deadline has passed
+    //     let clock = Clock::get()?;
+    //     require!(
+    //         challenge.deadline > clock.unix_timestamp,
+    //         ErrorCode::DeadlinePassed
+    //     );
         
-        // Verify the user is registered in the domain
-        let domain_index = user.domains
-            .iter()
-            .position(|d| d.name == challenge.domain)
-            .ok_or(ErrorCode::UserNotInDomain)?;
+    //     // Verify the user is registered in the domain
+    //     let domain_index = user.domains
+    //         .iter()
+    //         .position(|d| d.name == challenge.domain)
+    //         .ok_or(ErrorCode::UserNotInDomain)?;
         
-        // Check if the user has enough tokens
-        require!(
-            user.domains[domain_index].token_balance >= challenge.token_fee,
-            ErrorCode::InsufficientTokens
-        );
+    //     // Check if the user has enough tokens
+    //     require!(
+    //         user.domains[domain_index].token_balance >= challenge.token_fee,
+    //         ErrorCode::InsufficientTokens
+    //     );
         
-        // Deduct the token fee from the user
-        user.domains[domain_index].token_balance -= challenge.token_fee;
+    //     // Deduct the token fee from the user
+    //     user.domains[domain_index].token_balance -= challenge.token_fee;
         
-        // Register the user as the challenger
-        challenge.challenger = Some(user.authority);
+    //     // Register the user as the challenger
+    //     challenge.challenger = Some(user.authority);
         
-        msg!("Challenge taken by user: {}", user.name);
-        Ok(())
-    }
+    //     msg!("Challenge taken by user: {}", user.name);
+    //     Ok(())
+    // }
 
     pub fn submit_challenge(
         ctx: Context<SubmitChallenge>,
@@ -329,7 +333,13 @@ pub mod contract {
 // Account contexts for each instruction
 #[derive(Accounts)]
 pub struct Initialize<'info> {
-    #[account(init, payer = authority, space = 8 + 32)]
+    #[account(
+        init,
+        payer = authority,
+        space = 8 + 32 + 1, // Added 1 byte for is_initialized flag
+        seeds = [b"PROGRAM_AUTHORITY"],
+        bump
+    )]
     pub program_authority: Account<'info, ProgramAuthority>,
     
     #[account(mut)]
@@ -399,7 +409,8 @@ pub struct CreateChallenge<'info> {
     
     pub domain: Account<'info, Domain>,
     
-    pub program_authority: Account<'info, ProgramAuthority>,
+    #[account(mut)]
+    pub user: Account<'info, User>,
     
     #[account(mut)]
     pub authority: Signer<'info>,
@@ -407,16 +418,16 @@ pub struct CreateChallenge<'info> {
     pub system_program: Program<'info, System>,
 }
 
-#[derive(Accounts)]
-pub struct TakeChallenge<'info> {
-    #[account(mut)]
-    pub challenge: Account<'info, Challenge>,
+// #[derive(Accounts)]
+// pub struct TakeChallenge<'info> {
+//     #[account(mut)]
+//     pub challenge: Account<'info, Challenge>,
     
-    #[account(mut)]
-    pub user: Account<'info, User>,
+//     #[account(mut)]
+//     pub user: Account<'info, User>,
     
-    pub authority: Signer<'info>,
-}
+//     pub authority: Signer<'info>,
+// }
 
 #[derive(Accounts)]
 pub struct SubmitChallenge<'info> {
@@ -454,6 +465,7 @@ pub struct FinalizeChallenge<'info> {
 #[account]
 pub struct ProgramAuthority {
     pub authority: Pubkey,
+    pub is_initialized: bool,
 }
 
 #[account]
@@ -540,7 +552,7 @@ pub enum ErrorCode {
     
     #[msg("Insufficient reviews (need 5+)")]
     InsufficientReviews,
-
-    #[msg("Invalid program authority")]
+    
+    #[msg("Invalid program authority address")]
     InvalidProgramAuthority,
 }
