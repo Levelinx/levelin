@@ -1,110 +1,52 @@
 use anchor_lang::prelude::*;
 
-pub mod constants;
-pub mod errors;
-pub mod instructions;
-pub mod states;
-
-declare_id!("Ewxy19J2YDAQQv74hkHbz9MiVSzb9xvuK1drHxitrJos");
+declare_id!("Db48pxhkNZzJgt8ddMkhY6xbsmoPpTzPDqHuPtDSQBGr");
 
 #[program]
 pub mod contract {
     use super::*;
-    use instructions::initialize;
-    use instructions::user;
-    use instructions::domain;
-    use instructions::challenge;
 
-    // Initialize the program with the program authority
-    pub fn initialize(ctx: Context<initialize::Initialize>) -> Result<()> {
-        initialize::handler(ctx)
+    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
+        msg!("Greetings from: {:?}", ctx.program_id);
+        Ok(())
     }
 
-    // Register a new user
-    pub fn register_user(
-        ctx: Context<user::RegisterUser>,
-        name: String,
-        dob: String,
-        email: String,
-        domains: Vec<String>,
-    ) -> Result<()> {
-        user::register_user(ctx, name, dob, email, domains)
-    }
+    pub fn store_value(ctx: Context<StoreValue>, data: u64, text: String) -> Result<()> {
+        let value_account = &mut ctx.accounts.value_account;
+        value_account.value = data;
 
-    // Update user metadata
-    pub fn update_user_metadata(
-        ctx: Context<user::UpdateUserMetadata>,
-        name: Option<String>,
-        dob: Option<String>,
-        email: Option<String>,
-    ) -> Result<()> {
-        user::update_user_metadata(ctx, name, dob, email)
-    }
+        // Copy the string data into the fixed-size array
+        let str_bytes = text.as_bytes();
+        let max_len = value_account.text.len();
+        let copy_len = std::cmp::min(str_bytes.len(), max_len);
 
-    // Create a new domain
-    pub fn create_domain(
-        ctx: Context<domain::CreateDomain>,
-        domain_name: String,
-        domain_description: String,
-    ) -> Result<()> {
-        domain::create_domain(ctx, domain_name, domain_description)
-    }
+        value_account.text[..copy_len].copy_from_slice(&str_bytes[..copy_len]);
+        value_account.text_len = copy_len as u32;
 
-    // Add domain to user
-    pub fn add_domain_to_user(
-        ctx: Context<domain::AddDomainToUser>,
-        domain_name: String,
-    ) -> Result<()> {
-        domain::add_domain_to_user(ctx, domain_name)
-    }
-
-    // Create a challenge
-    pub fn create_challenge(
-        ctx: Context<challenge::CreateChallenge>,
-        domain_name: String,
-        description: String,
-        fee: u64,
-        deadline: i64,
-    ) -> Result<()> {
-        challenge::create_challenge(ctx, domain_name, description, fee, deadline)
-    }
-
-    // Take a challenge
-    pub fn take_challenge(
-        ctx: Context<challenge::TakeChallenge>,
-        challenge_id: Pubkey,
-    ) -> Result<()> {
-        challenge::take_challenge(ctx, challenge_id)
-    }
-
-    // Submit challenge proof
-    pub fn submit_challenge_proof(
-        ctx: Context<challenge::SubmitChallengeProof>,
-        challenge_id: Pubkey,
-        proof_url: String,
-    ) -> Result<()> {
-        challenge::submit_challenge_proof(ctx, challenge_id, proof_url)
-    }
-
-    // Review challenge
-    pub fn review_challenge(
-        ctx: Context<challenge::ReviewChallenge>,
-        challenge_id: Pubkey,
-        completed: bool,
-        review_notes: String,
-    ) -> Result<()> {
-        challenge::review_challenge(ctx, challenge_id, completed, review_notes)
-    }
-
-    // Finalize challenge
-    pub fn finalize_challenge(
-        ctx: Context<challenge::FinalizeChallenge>,
-        challenge_id: Pubkey,
-    ) -> Result<()> {
-        challenge::finalize_challenge(ctx, challenge_id)
+        msg!("Stored value: {}", data);
+        Ok(())
     }
 }
 
-// Empty struct to implement Initialize trait
 #[derive(Accounts)]
 pub struct Initialize {}
+
+// Account structure for the store_value instruction
+#[derive(Accounts)]
+pub struct StoreValue<'info> {
+    #[account(init, payer = user, space = 8 + 8 + 4 + 100)]
+    pub value_account: Account<'info, ValueData>,
+    
+    #[account(mut)]
+    pub user: Signer<'info>,
+    
+    pub system_program: Program<'info, System>,
+}
+
+// Define the structure of our data account
+#[account]
+pub struct ValueData {
+    pub value: u64,
+    pub text_len: u32,           // Length of the actual text stored
+    pub text: [u8; 100],
+}
