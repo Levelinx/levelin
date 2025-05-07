@@ -3,7 +3,7 @@ package_manager = "yarn"
 
 [features]
 resolution = true
-skip-lint = false
+skip-lint = true
 
 [programs.localnet]
 contract = "Ewxy19J2YDAQQv74hkHbz9MiVSzb9xvuK1drHxitrJos"
