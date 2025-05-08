@@ -1,12 +1,17 @@
 "use client"
 
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy, useLogin } from "@privy-io/react-auth";
 import { redirect } from "next/navigation";
 import Splash from "@/components/widgets/splash";
 import { Button } from "@/components/ui/button";
 
 export default function Login() {
-    const { ready, authenticated, login } = usePrivy();
+    const { ready, authenticated } = usePrivy();
+    const { login } = useLogin({
+        onComplete: () => {
+            redirect("/");
+        }
+    });
     if (!ready) return <Splash />;
     if (authenticated) {
         redirect("/");
