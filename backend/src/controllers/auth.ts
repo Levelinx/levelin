@@ -60,7 +60,22 @@ const handleMe: RequestHandler = async (req, res) => {
         const user = req.user as { id: string };
         const privyUser = await privy.getUserById(user.id) as PrivyUser;
 
-        const { data, error } = await supabase.from("users").select("*").eq("privy_id", privyUser.id);
+        const { data, error } = await supabase
+        .from("users")
+        .select(`
+            *,
+            user_domains(
+            id,
+            token_balance,
+            joined_at,
+            domain:domains(
+                id,
+                name,
+                description
+            )
+            )
+        `)
+        .eq("privy_id", privyUser.id);
 
         if (error) {
             console.log("Error fetching user:", error);

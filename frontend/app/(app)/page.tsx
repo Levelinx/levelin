@@ -9,6 +9,7 @@ import { toast } from "sonner";
 
 export default function Home() {
     const { user, ready, authenticated, logout } = usePrivy()
+    const { data: me } = useMe(); 
 
     if (!ready) {
         return <Splash />
@@ -16,8 +17,6 @@ export default function Home() {
     if (!authenticated) {
         redirect("/login")
     }
-
-    const { data: me } = useMe(); 
 
     return (
       <div>
