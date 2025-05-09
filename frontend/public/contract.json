@@ -1,0 +1,663 @@
+{
+  "address": "Db48pxhkNZzJgt8ddMkhY6xbsmoPpTzPDqHuPtDSQBGr",
+  "metadata": {
+    "name": "contract",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "add_domain_to_user",
+      "discriminator": [
+        46,
+        81,
+        87,
+        223,
+        106,
+        200,
+        158,
+        200
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true
+        },
+        {
+          "name": "domain"
+        },
+        {
+          "name": "authority",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "domain_name",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "create_challenge",
+      "discriminator": [
+        170,
+        244,
+        47,
+        1,
+        1,
+        15,
+        173,
+        239
+      ],
+      "accounts": [
+        {
+          "name": "challenge",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "domain"
+        },
+        {
+          "name": "user",
+          "writable": true
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "domain_name",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "token_fee",
+          "type": "u64"
+        },
+        {
+          "name": "deadline",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "create_domain",
+      "discriminator": [
+        103,
+        208,
+        151,
+        155,
+        64,
+        18,
+        133,
+        109
+      ],
+      "accounts": [
+        {
+          "name": "domain",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "program_authority"
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "domain_name",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "finalize_challenge",
+      "discriminator": [
+        184,
+        38,
+        132,
+        51,
+        103,
+        143,
+        203,
+        9
+      ],
+      "accounts": [
+        {
+          "name": "challenge",
+          "writable": true
+        },
+        {
+          "name": "user",
+          "writable": true
+        },
+        {
+          "name": "authority",
+          "signer": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize",
+      "discriminator": [
+        175,
+        175,
+        109,
+        31,
+        13,
+        152,
+        155,
+        237
+      ],
+      "accounts": [
+        {
+          "name": "program_authority",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  80,
+                  82,
+                  79,
+                  71,
+                  82,
+                  65,
+                  77,
+                  95,
+                  65,
+                  85,
+                  84,
+                  72,
+                  79,
+                  82,
+                  73,
+                  84,
+                  89
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "register_user",
+      "discriminator": [
+        2,
+        241,
+        150,
+        223,
+        99,
+        214,
+        116,
+        97
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "date_of_birth",
+          "type": "i64"
+        },
+        {
+          "name": "email",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "review_challenge",
+      "discriminator": [
+        91,
+        90,
+        245,
+        15,
+        138,
+        233,
+        48,
+        117
+      ],
+      "accounts": [
+        {
+          "name": "challenge",
+          "writable": true
+        },
+        {
+          "name": "user",
+          "writable": true
+        },
+        {
+          "name": "authority",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "passed",
+          "type": "bool"
+        },
+        {
+          "name": "notes",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "submit_challenge",
+      "discriminator": [
+        138,
+        65,
+        75,
+        102,
+        164,
+        142,
+        10,
+        202
+      ],
+      "accounts": [
+        {
+          "name": "challenge",
+          "writable": true
+        },
+        {
+          "name": "user"
+        },
+        {
+          "name": "authority",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "submission_url",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "update_user",
+      "discriminator": [
+        9,
+        2,
+        160,
+        169,
+        118,
+        12,
+        207,
+        84
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true
+        },
+        {
+          "name": "authority",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "date_of_birth",
+          "type": "i64"
+        },
+        {
+          "name": "email",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Challenge",
+      "discriminator": [
+        119,
+        250,
+        161,
+        121,
+        119,
+        81,
+        22,
+        208
+      ]
+    },
+    {
+      "name": "Domain",
+      "discriminator": [
+        167,
+        191,
+        231,
+        63,
+        146,
+        41,
+        115,
+        27
+      ]
+    },
+    {
+      "name": "ProgramAuthority",
+      "discriminator": [
+        38,
+        198,
+        188,
+        60,
+        171,
+        210,
+        169,
+        38
+      ]
+    },
+    {
+      "name": "User",
+      "discriminator": [
+        159,
+        117,
+        95,
+        227,
+        239,
+        151,
+        58,
+        236
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "NotAuthorized",
+      "msg": "Not authorized to perform this action"
+    },
+    {
+      "code": 6001,
+      "name": "DomainAlreadyAdded",
+      "msg": "Domain already added to user"
+    },
+    {
+      "code": 6002,
+      "name": "DomainMismatch",
+      "msg": "Domain name mismatch"
+    },
+    {
+      "code": 6003,
+      "name": "ChallengeAlreadyTaken",
+      "msg": "Challenge already taken"
+    },
+    {
+      "code": 6004,
+      "name": "DeadlinePassed",
+      "msg": "Deadline has passed"
+    },
+    {
+      "code": 6005,
+      "name": "UserNotInDomain",
+      "msg": "User is not registered in this domain"
+    },
+    {
+      "code": 6006,
+      "name": "InsufficientTokens",
+      "msg": "Insufficient tokens"
+    },
+    {
+      "code": 6007,
+      "name": "NotChallengeOwner",
+      "msg": "Not the challenge owner"
+    },
+    {
+      "code": 6008,
+      "name": "NoSubmission",
+      "msg": "No submission found"
+    },
+    {
+      "code": 6009,
+      "name": "InsufficientTokensForReview",
+      "msg": "Insufficient tokens for review (need 600+)"
+    },
+    {
+      "code": 6010,
+      "name": "AlreadyReviewed",
+      "msg": "Already reviewed this challenge"
+    },
+    {
+      "code": 6011,
+      "name": "ChallengeFinalized",
+      "msg": "Challenge already finalized"
+    },
+    {
+      "code": 6012,
+      "name": "InsufficientReviews",
+      "msg": "Insufficient reviews (need 5+)"
+    },
+    {
+      "code": 6013,
+      "name": "InvalidProgramAuthority",
+      "msg": "Invalid program authority address"
+    }
+  ],
+  "types": [
+    {
+      "name": "Challenge",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "domain",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "token_fee",
+            "type": "u64"
+          },
+          {
+            "name": "deadline",
+            "type": "i64"
+          },
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "challenger",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "submission_url",
+            "type": {
+              "option": "string"
+            }
+          },
+          {
+            "name": "reviews",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "Review"
+                }
+              }
+            }
+          },
+          {
+            "name": "is_completed",
+            "type": "bool"
+          },
+          {
+            "name": "is_finalized",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Domain",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProgramAuthority",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "is_initialized",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Review",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "reviewer",
+            "type": "pubkey"
+          },
+          {
+            "name": "passed",
+            "type": "bool"
+          },
+          {
+            "name": "notes",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "User",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "date_of_birth",
+            "type": "i64"
+          },
+          {
+            "name": "email",
+            "type": "string"
+          },
+          {
+            "name": "domains",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "UserDomain"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "UserDomain",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "token_balance",
+            "type": "u64"
+          }
+        ]
+      }
+    }
+  ]
+}

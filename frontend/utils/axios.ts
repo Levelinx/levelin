@@ -15,16 +15,6 @@ import axios, {
   api.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
       try {
-        // const supabase = await createClient();
-        // const {
-        //   data: { session },
-        // } = await supabase.auth.getSession();
-  
-        // if (session?.access_token) {
-        //   config.headers = config.headers || {};
-        //   config.headers["Authorization"] = `Bearer ${session.access_token}`;
-        // }
-  
         return config;
       } catch (error) {
         console.error("Error in request interceptor:", error);
