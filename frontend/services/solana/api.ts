@@ -43,7 +43,6 @@ export async function isWalletProgramAuthority(walletAddress: string): Promise<s
  * @param description - Description of the domain
  */
 export async function createDomainOnChain(privyWallet: any, domainName: string, description: string) {
-  try {
     const { transaction, domainAddress } = 
       await buildCreateDomainTransaction(privyWallet.address, domainName, description);
     
@@ -60,13 +59,6 @@ export async function createDomainOnChain(privyWallet: any, domainName: string, 
       signature: signature.signature, 
       domainAddress,
     };
-  } catch (error: any) {
-    console.error("Error creating domain:", error);
-    return { 
-      success: false, 
-      error: error.message 
-    };
-  }
 }
 
 /**
@@ -77,7 +69,6 @@ export async function createDomainOnChain(privyWallet: any, domainName: string, 
  * @param email - User's email
  */
 export async function registerUser(privyWallet: any, name: string, dateOfBirth: Date, email: string) {
-  try {
     // Build transaction
     const { transaction, userAddress, userKeypair } = 
       await buildRegisterUserTransaction(privyWallet.address, name, dateOfBirth, email);
@@ -94,13 +85,6 @@ export async function registerUser(privyWallet: any, name: string, dateOfBirth: 
       userAddress,
       confirmation 
     };
-  } catch (error: any) {
-    console.error("Error registering user:", error);
-    return { 
-      success: false, 
-      error: error.message 
-    };
-  }
 }
 
 /**
@@ -111,7 +95,6 @@ export async function registerUser(privyWallet: any, name: string, dateOfBirth: 
  * @param domainName - Name of the domain
  */
 export async function addDomainToUser(privyWallet: any, userAddress: string, domainAddress: string, domainName: string) {
-  try {
     const { transaction } = await buildAddDomainToUserTransaction(
       privyWallet.address,
       userAddress,
@@ -130,13 +113,6 @@ export async function addDomainToUser(privyWallet: any, userAddress: string, dom
       signature, 
       confirmation 
     };
-  } catch (error: any) {
-    console.error("Error adding domain to user:", error);
-    return { 
-      success: false, 
-      error: error.message 
-    };
-  }
 }
 
 export async function getAllDomains(walletAddress: string) {

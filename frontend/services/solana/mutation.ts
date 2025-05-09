@@ -26,7 +26,7 @@ export const useCreateDomainTransaction = (wallet: any, domain: any) => {
                 toast.success("Domain created successfully!");
                 queryClient.invalidateQueries({ queryKey: ["allDomains", wallet.address] });
             } else {
-                toast.error(`Failed to create domain: ${data.error}`);
+                toast.error(`Failed to create domain`);
             }
         },
         onError: (error) => {
