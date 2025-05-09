@@ -3,10 +3,9 @@ import privy from "../config/privy";
 
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        // console.log('All cookies:', req.cookies);
         const authToken = req.cookies['privy-token'];
 
-        console.log("authToken", authToken);
+        // console.log("authToken", authToken);
         if (!authToken) {
             res.status(401).json({ message: 'Unauthorized' });
             return;
@@ -21,13 +20,13 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
             return;
         }
 
-        console.log("user", user);
+        // console.log("user", user);
 
         req.user = user;
 
         next();
     } catch (error) {
-        console.log("error in auth middleware", error);
+        // console.log("error in auth middleware", error);
         res.status(401).json({ message: 'Unauthorized' });
         return;
     }
