@@ -4,8 +4,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Copy, LogOut } from "lucide-react";
+import { Settings, Copy } from "lucide-react";
 import { useState } from "react";
+import { Post } from "@/components/post";
+import { useRouter } from "next/navigation";
 
 const dummyUser = {
   name: "Alice Johnson",
@@ -21,14 +23,24 @@ const dummyUser = {
   walletAddress: "0x1234...5678",
   posts: [
     {
-      id: 1,
+      id: "1",
+      user: {
+        id: "1",
+        name: "Alice Johnson",
+        avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice",
+      },
       content: "Just completed my first smart contract! 🚀",
-      timestamp: "2 hours ago",
+      created_at: "2024-03-20T10:00:00Z",
     },
     {
-      id: 2,
+      id: "2",
+      user: {
+        id: "1",
+        name: "Alice Johnson",
+        avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice",
+      },
       content: "Exploring the world of Web3 development",
-      timestamp: "1 day ago",
+      created_at: "2024-03-19T15:30:00Z",
     },
   ],
   challenges: [
@@ -61,6 +73,7 @@ const dummyUser = {
 
 export default function ProfilePage() {
   const [copied, setCopied] = useState(false);
+  const router = useRouter();
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -75,6 +88,7 @@ export default function ProfilePage() {
           variant="ghost"
           size="icon"
           className="absolute right-0 top-0"
+          onClick={() => router.push("/settings")}
         >
           <Settings className="h-5 w-5" />
         </Button>
@@ -120,16 +134,9 @@ export default function ProfilePage() {
         </TabsList>
 
         <TabsContent value="posts">
-          <div className="space-y-4">
+          <div className="divide-y">
             {dummyUser.posts.map((post) => (
-              <Card key={post.id}>
-                <CardContent className="pt-6">
-                  <p>{post.content}</p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    {post.timestamp}
-                  </p>
-                </CardContent>
-              </Card>
+              <Post key={post.id} post={post} />
             ))}
           </div>
         </TabsContent>
