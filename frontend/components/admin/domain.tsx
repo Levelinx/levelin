@@ -5,6 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 
+interface Domain {
+  publicKey: string;
+  name: string;
+  description: string;
+  authority: string;
+}
+
 interface DomainsListProps {
   walletAddress: string;
 }
@@ -73,7 +80,7 @@ export function DomainsList({ walletAddress }: DomainsListProps) {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {data.domains.map((domain: any) => (
+          {data.domains.map((domain: Domain) => (
             <div 
               key={domain.publicKey} 
               className="border rounded-md p-4 bg-white hover:shadow-md transition-shadow"

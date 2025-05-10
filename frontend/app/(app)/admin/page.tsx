@@ -24,7 +24,7 @@ export default function Admin() {
   const {sendTransaction} = useSendTransaction();
   const {mutate, isPending, isSuccess} = useInitialiseTransaction({address: ready ? solanaWallet.address : '', sendTransaction});
   const {data: programAuthority, isLoading} = useProgramAuthority( ready ? solanaWallet.address : '');
-  const {mutate: createDomainMutation, isPending: createDomainPending, isSuccess: createDomainSuccess, data: createDomainData} = useCreateDomainTransaction(
+  const {mutate: createDomainMutation, isPending: createDomainPending, isSuccess: createDomainSuccess } = useCreateDomainTransaction(
     {address: ready ? solanaWallet.address : '', sendTransaction}, 
     {name: domainName, description: description}
   );
@@ -36,7 +36,7 @@ export default function Admin() {
     mutate();
   };
 
-  const handleCreateDomain = (e: any) => {
+  const handleCreateDomain = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!solanaWallet) {
       toast.error("Please connect your Solana wallet first");
