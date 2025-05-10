@@ -1,11 +1,13 @@
 "use client";
 
 import { Home, Search, PlusCircle, Trophy, User } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePrivy } from "@privy-io/react-auth";
+import Splash from "@/components/widgets/splash";
 
 const tabs = [
     {
@@ -48,6 +50,7 @@ export default function AppLayout({
     const lastY = useRef<number | null>(null);
     const lastMoveTime = useRef<number>(0);
     const [isMobile, setIsMobile] = useState(false);
+    const { ready, authenticated } = usePrivy();
 
     // Detect mobile on mount and on resize
     useEffect(() => {
@@ -120,6 +123,13 @@ export default function AppLayout({
             transition: { type: "spring", stiffness: 400, damping: 30, duration: 0.2 },
         },
     };
+
+    if (!ready) {
+        return <Splash />;
+    }
+    if (ready && !authenticated) {
+        redirect("/signin");
+    }
 
     return (
         <div className="flex min-h-screen flex-col bg-background">

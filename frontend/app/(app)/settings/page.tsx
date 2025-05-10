@@ -10,8 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Loader2, LogOut, ArrowLeft } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
-
+import { useLogout } from "@privy-io/react-auth";
+import { toast } from "sonner";
 export default function SettingsPage() {
   const router = useRouter();
   const { data: me } = useMe();
@@ -24,9 +24,7 @@ export default function SettingsPage() {
   const [isUploading, setIsUploading] = useState(false);
 
   const handleLogout = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/");
+    logout();
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,6 +62,11 @@ export default function SettingsPage() {
     e.preventDefault();
     updateProfile(formData);
   };
+
+  const { logout } = useLogout({ onSuccess: () => {
+    toast.success("Logged out successfully");
+    router.push("/signin");
+  } });
 
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
