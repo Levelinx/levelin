@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Copy } from "lucide-react";
+import { Settings, Copy, Trophy, Star, Zap, Target } from "lucide-react";
 import { useState } from "react";
 import { Post } from "@/components/post";
 import { useRouter } from "next/navigation";
@@ -69,6 +69,40 @@ const dummyUser = {
       value: 1000,
     },
   ],
+  achievements: [
+    {
+      id: 1,
+      title: "Early Adopter",
+      description: "Joined during the beta phase",
+      icon: Star,
+      unlockedAt: "2024-01-15",
+      rarity: "rare",
+    },
+    {
+      id: 2,
+      title: "Challenge Master",
+      description: "Completed 10 challenges",
+      icon: Trophy,
+      unlockedAt: "2024-02-20",
+      rarity: "epic",
+    },
+    {
+      id: 3,
+      title: "Speed Demon",
+      description: "Completed a challenge in under 24 hours",
+      icon: Zap,
+      unlockedAt: "2024-03-01",
+      rarity: "legendary",
+    },
+    {
+      id: 4,
+      title: "Perfect Score",
+      description: "Achieved 100% on a challenge",
+      icon: Target,
+      unlockedAt: "2024-03-15",
+      rarity: "epic",
+    },
+  ],
 };
 
 export default function ProfilePage() {
@@ -79,6 +113,19 @@ export default function ProfilePage() {
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const getRarityColor = (rarity: string) => {
+    switch (rarity) {
+      case "rare":
+        return "text-blue-500";
+      case "epic":
+        return "text-purple-500";
+      case "legendary":
+        return "text-yellow-500";
+      default:
+        return "text-muted-foreground";
+    }
   };
 
   return (
@@ -127,10 +174,11 @@ export default function ProfilePage() {
 
       {/* Tabs */}
       <Tabs defaultValue="posts" className="mb-8">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="posts">Posts</TabsTrigger>
           <TabsTrigger value="challenges">Challenges</TabsTrigger>
           <TabsTrigger value="holdings">Holdings</TabsTrigger>
+          <TabsTrigger value="achievements">Achievements</TabsTrigger>
         </TabsList>
 
         <TabsContent value="posts">
@@ -203,6 +251,31 @@ export default function ProfilePage() {
                       </p>
                     </div>
                     <p className="font-semibold">${holding.value}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="achievements">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {dummyUser.achievements.map((achievement) => (
+              <Card key={achievement.id}>
+                <CardContent className="pt-6">
+                  <div className="flex items-start gap-4">
+                    <div className={`p-2 rounded-lg bg-muted ${getRarityColor(achievement.rarity)}`}>
+                      <achievement.icon className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">{achievement.title}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {achievement.description}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Unlocked on {new Date(achievement.unlockedAt).toLocaleDateString()}
+                      </p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
