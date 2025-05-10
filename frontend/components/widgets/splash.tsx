@@ -64,7 +64,7 @@ const Splash = () => {
         exit="exit"
       >
         <Image
-          src="/images/logo.png"
+          src="/images/logo2.0.png"
           alt="App Logo"
           width={150}
           height={150}

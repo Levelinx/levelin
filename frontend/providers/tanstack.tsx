@@ -24,7 +24,7 @@ const TanstackProvider: React.FC<{ children: React.ReactNode }> = ({ children })
       <PrivyProvider
       appId="cmabmawrc00fdl80nh8wxiqur"
       clientId="client-WY6LFzQxDD9JgtMq9Go3aNKSGZuBAVnpfod6u5rDro6pS"
-      config={{appearance: {logo: "/images/logo.png", landingHeader: "Login or Signup", loginMessage: "Levelin" }}}
+      config={{appearance: {logo: "/images/logo2.0.png", landingHeader: "Login or Signup", loginMessage: "Levelin" }}}
     >
       {children}
     </PrivyProvider>
