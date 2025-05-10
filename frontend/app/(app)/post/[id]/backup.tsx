@@ -6,7 +6,7 @@ import { Post } from "@/components/post";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft } from "lucide-react";
-import { Post as PostType } from "@/lib/dummy-data";
+import { Post as PostType, Comment } from "@/lib/dummy-data";
 
 // This would normally come from an API
 const dummyPost: PostType = {
@@ -45,12 +45,14 @@ const dummyPost: PostType = {
 };
 
 export default function PostPage({ params }: { params: { id: string } }) {
+    const { id } = params;
+    console.log(id);
     const router = useRouter();
     const [comment, setComment] = useState("");
     const [replyTo, setReplyTo] = useState<string | null>(null);
 
     // Flatten comments and replies into a single array
-    const flatComments = (dummyPost.comments || []).reduce<any[]>((acc, comment) => {
+    const flatComments = (dummyPost.comments || []).reduce<Comment[]>((acc, comment) => {
         acc.push(comment);
         if (comment.replies) {
             acc.push(...comment.replies);

@@ -108,6 +108,7 @@ const dummyUser = {
 export default function ProfilePage() {
   const [copied, setCopied] = useState(false);
   const router = useRouter();
+  console.log(copied);
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
