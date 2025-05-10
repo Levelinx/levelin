@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ProfileSchema } from "../schemas/profile";
 
 export const getProfileSchema = z.object({
     params: z.object({
@@ -7,11 +8,7 @@ export const getProfileSchema = z.object({
 });
 
 export const updateProfileSchema = z.object({
-    body: z.object({
-        name: z.string().min(1, "Name is required").max(100, "Name is too long"),
-        bio: z.string().max(500, "Bio is too long").optional(),
-        avatar_url: z.string().url("Invalid avatar URL").optional()
-    })
+    body: ProfileSchema
 });
 
 export const getUploadUrlSchema = z.object({

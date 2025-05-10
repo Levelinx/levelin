@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { supabase } from "../config";
-import { ProfileSchema } from "../schemas/profile";
+import { ProfileInput } from "../schemas/profile";
 
 export const getProfile = async (req: Request, res: Response) => {
     try {
@@ -47,15 +47,12 @@ export const getRandomProfiles = async (req: Request, res: Response) => {
 
 export const updateProfile = async (req: Request, res: Response) => {
     try {
-        const { name, bio, avatar_url, date_of_birth } = req.body;
+        const profileData: ProfileInput = req.body;
 
         const { data: profile, error } = await supabase
             .from("users")
             .update({
-                name,
-                bio,
-                avatar_url,
-                date_of_birth,
+                ...profileData,
                 updated_at: new Date().toISOString(),
             })
             .eq("privy_id", req.user.id)
