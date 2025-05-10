@@ -152,7 +152,6 @@ export default function AppLayout({
                                     )}
                                 >
                                     <tab.icon className="h-6 w-6" />
-                                    <span className="text-xs">{tab.name}</span>
                                 </Link>
                             );
                         })}
