@@ -86,7 +86,7 @@ export default function NewChallengePage() {
             className="bg-primary text-primary-foreground rounded-lg px-6 py-2 font-semibold hover:bg-primary/90 transition"
             disabled={!title.trim() || !description.trim()}
           >
-            Create Challenge
+            Take Challenge
           </button>
         </div>
       </form>

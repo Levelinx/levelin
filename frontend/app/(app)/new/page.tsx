@@ -66,7 +66,7 @@ export default function NewPage() {
               </div>
               <div>
                 <h3 className="text-xl font-semibold">Create Challenge</h3>
-                <p className="text-muted-foreground mt-1">Start a new challenge for others</p>
+                <p className="text-muted-foreground mt-1">Set goals for yourself and earn tokens upon completion</p>
               </div>
             </div>
           </Link>
