@@ -47,6 +47,15 @@ export default function AppLayout({
     const tabBarRef = useRef<HTMLDivElement>(null);
     const lastY = useRef<number | null>(null);
     const lastMoveTime = useRef<number>(0);
+    const [isMobile, setIsMobile] = useState(false);
+
+    // Detect mobile on mount and on resize
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener("resize", checkMobile);
+        return () => window.removeEventListener("resize", checkMobile);
+    }, []);
 
     // Show tab bar for 3s on initial mount
     useEffect(() => {
@@ -62,8 +71,12 @@ export default function AppLayout({
     // Show/hide tab bar on desktop based on mouse position, with 3s delay to hide
     useEffect(() => {
         if (typeof window === "undefined") return;
+        if (isMobile) {
+            setShowTabBar(true);
+            return;
+        }
         const handleMouseMove = (e: MouseEvent) => {
-            if (window.innerWidth < 768) return setShowTabBar(true);
+            if (isMobile) return setShowTabBar(true);
             const fromBottom = window.innerHeight - e.clientY;
             const now = Date.now();
             // Detect fast downward movement
@@ -90,7 +103,7 @@ export default function AppLayout({
         };
         window.addEventListener("mousemove", handleMouseMove);
         return () => window.removeEventListener("mousemove", handleMouseMove);
-    }, [forceShow]);
+    }, [forceShow, isMobile]);
 
     // Animation variants for fast show and slow hide
     const variants = {
