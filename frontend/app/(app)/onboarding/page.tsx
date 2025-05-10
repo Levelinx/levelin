@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { useMe } from "@/services/auth/query";
 import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 const steps = [
     {
@@ -46,6 +47,7 @@ export default function Onboarding() {
     const [isUploading, setIsUploading] = useState(false);
 
     const router = useRouter();
+    const queryClient = useQueryClient();
     const { data: me } = useMe();
     const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
     const { mutate: getUploadUrl } = useGetUploadUrl();
@@ -75,6 +77,8 @@ export default function Onboarding() {
             
             updateProfile(formData, {
                 onSuccess: () => {
+                    // Invalidate and refetch the me query
+                    queryClient.invalidateQueries({ queryKey: ["me"] });
                     router.push("/");
                 },
             });
