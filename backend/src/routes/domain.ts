@@ -1,8 +1,13 @@
 import { Router } from "express";
-import { createDomain } from "../controllers/domain";
+import { createDomain, getDomains, getDomain } from "../controllers/domain";
+import { auth } from "../middlewares/auth";
+import { validate } from "../middlewares/validate";
+import { createDomainSchema, getDomainSchema } from "../validations/domain";
 
-const domainRouter = Router();
+const router = Router();
 
-domainRouter.post("/new", createDomain);
+router.post("/", auth, validate(createDomainSchema), createDomain);
+router.get("/", auth, getDomains);
+router.get("/:id", auth, validate(getDomainSchema), getDomain);
 
-export default domainRouter;
+export default router;
