@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 export function UserCard({ name, avatar, subtitle }: { name: string; avatar: string; subtitle?: string }) {
   return (
     <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted transition">

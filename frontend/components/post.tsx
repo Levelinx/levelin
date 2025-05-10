@@ -1,5 +1,4 @@
 import { Post as PostType } from "@/lib/dummy-data";
-import Image from "next/image";
 
 interface PostProps {
     post: PostType;
