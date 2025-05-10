@@ -21,6 +21,7 @@ export const createChallenge = async (req: Request, res: Response): Promise<void
 
     if (error) {
         res.status(500).json({ error: error.message });
+        return;
     }
     res.status(201).json({ data });
 }
@@ -51,6 +52,7 @@ export const getChallenges = async (req: Request, res: Response) => {
 
     if (error) {
         res.status(500).json({ error: error.message });
+        return;
     }
     res.status(200).json({ data });
 }
@@ -69,10 +71,12 @@ export const submitChallenge = async (req: Request, res: Response) => {
 
     if (challengeError || !challenge) {
         res.status(404).json({ error: "Challenge not found" });
+        return;
     }
 
     if (challenge.status !== "open") {
         res.status(400).json({ error: "Challenge is not open for submissions" });
+        return;
     }
 
     // Create submission
@@ -90,6 +94,7 @@ export const submitChallenge = async (req: Request, res: Response) => {
 
     if (error) {
         res.status(500).json({ error: error.message });
+        return;
     }
     res.status(201).json({ data });
 }
@@ -108,6 +113,7 @@ export const reviewChallenge = async (req: Request, res: Response) => {
 
     if (submissionError || !submission) {
         res.status(404).json({ error: "Submission not found" });
+        return;
     }
 
     // Create review
@@ -125,6 +131,7 @@ export const reviewChallenge = async (req: Request, res: Response) => {
 
     if (error) {
         res.status(500).json({ error: error.message });
+        return;
     }
 
     // Update submission status

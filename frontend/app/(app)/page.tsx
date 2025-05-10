@@ -18,6 +18,11 @@ export default function Home() {
         redirect("/login")
     }
 
+    // Check if profile is incomplete
+    if (me?.data?.[0] && (!me.data[0].name || !me.data[0].bio || !me.data[0].avatar_url)) {
+        redirect("/onboarding")
+    }
+
     return (
       <div>
         {authenticated ? <h1>Hello {user?.email?.address}</h1> : <h1>Hello World</h1>}

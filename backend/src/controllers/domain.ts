@@ -6,9 +6,9 @@ export const createDomain = async (req: Request, res: Response) => {
     const { data, error } = await supabase.from("domains").insert({ name: domain }).select();
     if (error) {
         res.status(500).json({ error: error.message });
-    } else {
-        res.status(200).json({ data });
+        return;
     }
+    res.status(200).json({ data });
 }
 
 export const getDomains = async (req: Request, res: Response): Promise<void> => {
@@ -19,6 +19,7 @@ export const getDomains = async (req: Request, res: Response): Promise<void> => 
 
     if (error) {
         res.status(500).json({ error: error.message });
+        return;
     }
     res.status(200).json({ data });
 }
@@ -33,9 +34,11 @@ export const getDomain = async (req: Request, res: Response): Promise<void> => {
 
     if (error) {
         res.status(500).json({ error: error.message });
+        return;
     }
     if (!data) {
         res.status(404).json({ error: "Domain not found" });
+        return;
     }
     res.status(200).json({ data });
 }

@@ -21,6 +21,7 @@ export const validate = (schema: AnyZodObject) => {
                 return;
             }
             res.status(500).json({ error: "Internal server error" });
+            return;
         }
     };
 }; 

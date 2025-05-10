@@ -1,72 +1,107 @@
-import { supabase } from "../config";
 import { Request, Response } from "express";
+import { supabase } from "../config";
+import { ProfileSchema } from "../schemas/profile";
 
-export const getProfile = async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.params;
-    const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", id)
-        .single();
+export const getProfile = async (req: Request, res: Response) => {
+    try {
+        const { data: profile, error } = await supabase
+            .from("users")
+            .select("*")
+            .eq("privy_id", req.user.privyId)
+            .single();
 
-    if (error) {
-        res.status(500).json({ error: error.message });
+        if (error) throw error;
+
+        res.json(profile);
+    } catch (error) {
+        console.error("Error fetching profile:", error);
+        res.status(500).json({ error: "Failed to fetch profile" });
     }
-    if (!data) {
-        res.status(404).json({ error: "Profile not found" });
+};
+
+export const getRandomProfiles = async (req: Request, res: Response) => {
+    try {
+        // First get the user's UUID from privy_id
+        const { data: currentUser, error: userError } = await supabase
+            .from("users")
+            .select("id")
+            .eq("privy_id", req.user.privyId)
+            .single();
+
+        if (userError) throw userError;
+
+        const { data: profiles, error } = await supabase
+            .from("users")
+            .select("*")
+            .neq("id", currentUser.id)
+            .limit(5);
+
+        if (error) throw error;
+
+        res.json(profiles);
+    } catch (error) {
+        console.error("Error fetching random profiles:", error);
+        res.status(500).json({ error: "Failed to fetch random profiles" });
     }
-    res.status(200).json({ data });
-}
+};
 
-export const getRandomProfiles = async (req: Request, res: Response): Promise<void> => {
-    const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .limit(5)
-        .order("created_at", { ascending: false });
+export const updateProfile = async (req: Request, res: Response) => {
+    try {
+        const { name, bio, avatar_url, date_of_birth } = req.body;
 
-    if (error) {
-        res.status(500).json({ error: error.message });
+        const { data: profile, error } = await supabase
+            .from("users")
+            .update({
+                name,
+                bio,
+                avatar_url,
+                date_of_birth,
+                updated_at: new Date().toISOString(),
+            })
+            .eq("privy_id", req.user.id)
+            .select()
+            .single();
+
+        if (error) {
+            console.error("Supabase error:", error);
+            throw error;
+        }
+
+        res.json(profile);
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        res.status(500).json({ error: "Failed to update profile" });
     }
-    res.status(200).json({ data });
-}
+};
 
-export const updateProfile = async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.user; // From auth middleware
-    const { name, bio, avatar_url } = req.body;
+export const getUploadUrl = async (req: Request, res: Response) => {
+    try {
+        const { fileType } = req.body;
+        const fileExt = fileType.split("/")[1];
+        
+        // Get user's UUID from privy_id
+        const { data: user, error: userError } = await supabase
+            .from("users")
+            .select("id")
+            .eq("privy_id", req.user.id)
+            .single();
 
-    const { data, error } = await supabase
-        .from("profiles")
-        .update({ name, bio, avatar_url, updated_at: new Date().toISOString() })
-        .eq("id", id)
-        .select()
-        .single();
+        if (userError) throw userError;
 
-    if (error) {
-        res.status(500).json({ error: error.message });
+        const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+
+        const { data, error } = await supabase.storage
+            .from("objects")
+            .createSignedUploadUrl(fileName);
+
+        if (error) throw error;
+
+        res.json({
+            uploadUrl: data.signedUrl,
+            path: data.path,
+        });
+    } catch (error) {
+        console.error("Error getting upload URL:", error);
+        res.status(500).json({ error: "Failed to get upload URL" });
     }
-    res.status(200).json({ data });
-}
-
-export const getUploadUrl = async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.user; // From auth middleware
-    const { fileType } = req.body;
-
-    if (!fileType) {
-        res.status(400).json({ error: "File type is required" });
-    }
-
-    const fileName = `${id}/${Date.now()}.${fileType.split("/")[1]}`;
-    const { data, error } = await supabase.storage
-        .from("objects")
-        .createSignedUploadUrl(fileName);
-
-    if (error) {
-        res.status(500).json({ error: error.message });
-    }
-
-    res.status(200).json({ 
-        uploadUrl: data?.signedUrl,
-        path: fileName
-    });
-} 
+}; 
