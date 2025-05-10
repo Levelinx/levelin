@@ -14,7 +14,7 @@ export function LeaderboardRow({
   return (
     <div className="flex items-center gap-3 p-2 border-b">
       <div className="w-6 text-center font-bold text-muted-foreground">{rank}</div>
-      <Image src={avatar} alt={name} width={32} height={32} className="rounded-full" />
+      <img src={avatar} alt={name} width={32} height={32} className="rounded-full" />
       <div className="flex-1">
         <div className="font-medium">{name}</div>
       </div>

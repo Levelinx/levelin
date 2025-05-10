@@ -3,10 +3,10 @@ import { useState } from "react";
 import { UserCard } from "@/components/widgets/UserCard";
 
 const dummyUsers = [
-  { name: "Alice Johnson", avatar: "/images/avatar1.png", subtitle: "Solana Dev" },
-  { name: "Bob Lee", avatar: "/images/avatar2.png", subtitle: "Rust Expert" },
-  { name: "Carol Smith", avatar: "/images/avatar3.png", subtitle: "Smart Contract Auditor" },
-  { name: "David Kim", avatar: "/images/avatar4.png", subtitle: "Frontend Wizard" },
+  { name: "Alice Johnson", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice", subtitle: "Solana Dev" },
+  { name: "Bob Lee", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bob", subtitle: "Rust Expert" },
+  { name: "Carol Smith", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Carol", subtitle: "Smart Contract Auditor" },
+  { name: "David Kim", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=David", subtitle: "Frontend Wizard" },
 ];
 
 export default function SearchPage() {

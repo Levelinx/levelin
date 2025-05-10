@@ -3,7 +3,7 @@ import { UserCard } from "@/components/widgets/UserCard";
 
 const dummyUser = {
   name: "Alice Johnson",
-  avatar: "/images/avatar1.png",
+  avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice",
   subtitle: "Solana Dev",
   bio: "Building on Solana. Love Rust and DeFi. Always up for a challenge!",
   stats: {

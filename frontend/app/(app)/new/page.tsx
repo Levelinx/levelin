@@ -7,7 +7,7 @@ export default function NewPage() {
   const [submitted, setSubmitted] = useState(false);
   const dummyUser = {
     name: "Alice Johnson",
-    avatar: "/images/avatar1.png",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice",
   };
   return (
     <div className="max-w-2xl mx-auto py-4">

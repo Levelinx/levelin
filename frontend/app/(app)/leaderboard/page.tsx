@@ -2,10 +2,10 @@
 import { LeaderboardRow } from "@/components/widgets/LeaderboardRow";
 
 const dummyLeaders = [
-  { name: "Alice Johnson", avatar: "/images/avatar1.png", score: 1200 },
-  { name: "Bob Lee", avatar: "/images/avatar2.png", score: 1100 },
-  { name: "Carol Smith", avatar: "/images/avatar3.png", score: 950 },
-  { name: "David Kim", avatar: "/images/avatar4.png", score: 900 },
+  { name: "Alice Johnson", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice", score: 1200 },
+  { name: "Bob Lee", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bob", score: 1100 },
+  { name: "Carol Smith", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Carol", score: 950 },
+  { name: "David Kim", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=David", score: 900 },
 ];
 
 export default function LeaderboardPage() {
