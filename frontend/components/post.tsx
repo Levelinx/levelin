@@ -1,12 +1,22 @@
 import { Post as PostType } from "@/lib/dummy-data";
+import { useRouter } from "next/navigation";
+import { MessageCircle, Heart, Share2, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface PostProps {
     post: PostType;
+    showActions?: boolean;
 }
 
-export function Post({ post }: PostProps) {
+export function Post({ post, showActions = true }: PostProps) {
+    const router = useRouter();
+
+    const handlePostClick = () => {
+        router.push(`/post/${post.id}`);
+    };
+
     return (
-        <article className="p-4">
+        <article className="p-4 border-b hover:bg-muted/50 transition-colors cursor-pointer" onClick={handlePostClick}>
             <div className="flex items-center gap-3">
                 <img
                     src={post.user.avatar_url}
@@ -27,6 +37,21 @@ export function Post({ post }: PostProps) {
             <p className="mt-4 whitespace-pre-wrap">
                 {post.content}
             </p>
+            {showActions && (
+                <div className="flex items-center gap-6 mt-4">
+                    <Button variant="ghost" size="sm" className="gap-2">
+                        <MessageCircle className="h-4 w-4" />
+                        <span>{post.comments?.length || 0}</span>
+                    </Button>
+                    <Button variant="ghost" size="sm" className="gap-2">
+                        <Heart className="h-4 w-4" />
+                        <span>{post.likes || 0}</span>
+                    </Button>
+                    <Button variant="ghost" size="sm" className="gap-2">
+                        <Share2 className="h-4 w-4" />
+                    </Button>
+                </div>
+            )}
         </article>
     );
 }

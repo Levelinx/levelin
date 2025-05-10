@@ -1,13 +1,25 @@
-export type Post = {
+export interface User {
     id: string;
-    user: {
-        id: string;
-        name: string;
-        avatar_url: string;
-    };
+    name: string;
+    avatar_url: string;
+}
+
+export interface Comment {
+    id: string;
     content: string;
     created_at: string;
-};
+    user: User;
+    replies?: Comment[];
+}
+
+export interface Post {
+    id: string;
+    content: string;
+    created_at: string;
+    user: User;
+    comments?: Comment[];
+    likes?: number;
+}
 
 export type Challenge = {
     id: string;
