@@ -104,4 +104,34 @@ export const getUploadUrl = async (req: Request, res: Response) => {
         console.error("Error getting upload URL:", error);
         res.status(500).json({ error: "Failed to get upload URL" });
     }
+};
+
+export const searchProfiles = async (req: Request, res: Response) => {
+    try {
+        const { search, cursor, limit = 10 } = req.query;
+        
+        let query = supabase
+            .from("users")
+            .select("*", { count: 'exact' })
+            .ilike("name", `%${search}%`)
+            .order("name", { ascending: true })
+            .limit(Number(limit));
+
+        if (cursor) {
+            query = query.gt("name", cursor);
+        }
+
+        const { data: profiles, error, count } = await query;
+
+        if (error) throw error;
+
+        res.json({
+            data: profiles,
+            count,
+            nextCursor: profiles.length > 0 ? profiles[profiles.length - 1].name : null
+        });
+    } catch (error) {
+        console.error("Error searching profiles:", error);
+        res.status(500).json({ error: "Failed to search profiles" });
+    }
 }; 

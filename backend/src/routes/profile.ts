@@ -1,11 +1,12 @@
 import { Router } from "express";
-import { getProfile, getRandomProfiles, updateProfile, getUploadUrl } from "../controllers/profile";
+import { getProfile, getRandomProfiles, updateProfile, getUploadUrl, searchProfiles } from "../controllers/profile";
 import { auth } from "../middlewares/auth";
 import { validate } from "../middlewares/validate";
-import { getProfileSchema, updateProfileSchema, getUploadUrlSchema } from "../validations/profile";
+import { getProfileSchema, updateProfileSchema, getUploadUrlSchema, searchProfilesSchema } from "../validations/profile";
 
 const router = Router();
 
+router.get("/search", validate(searchProfilesSchema), searchProfiles);
 router.get("/random", getRandomProfiles);
 router.get("/:id", validate(getProfileSchema), getProfile);
 router.put("/", auth, validate(updateProfileSchema), updateProfile);
