@@ -1,7 +1,7 @@
 "use client"
 
 import { Bell } from "lucide-react";
-import { useMe } from "@/services/auth/query";
+// import { useMe } from "@/services/auth/query";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { dummyPosts } from "@/lib/dummy-data";
@@ -9,7 +9,7 @@ import { Post, PostSkeleton } from "@/components/post";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-    const { data: me } = useMe();
+    // const { data: me } = useMe();
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -20,9 +20,9 @@ export default function Home() {
         return () => clearTimeout(timer);
     }, []);
 
-    if (!me?.data?.[0]) {
-        return null;
-    }
+    // if (!me?.data?.[0]) {
+    //     return null;
+    // }
 
     return (
         <div className="container max-w-2xl">
