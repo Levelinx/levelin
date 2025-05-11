@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Settings, ArrowLeft } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Post } from "@/components/post";
+import { Post, PostSkeleton } from "@/components/post";
+import { useProfile } from "@/services/profile/query";
+import { useUserPosts } from "@/services/posts/query";
 
 interface Profile {
   id: string;
@@ -49,36 +51,18 @@ const dummyProfiles: Record<string, Profile> = {
   }
 };
 
-// Dummy posts for demonstration
-const dummyPosts = [
-  {
-    id: "1",
-    user: {
-      id: "user1",
-      name: "Alice Johnson",
-      avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice",
-    },
-    content: "Just completed my first smart contract! 🚀",
-    created_at: "2024-03-20T10:00:00Z",
-  },
-  {
-    id: "2",
-    user: {
-      id: "user1",
-      name: "Alice Johnson",
-      avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice",
-    },
-    content: "Exploring the world of Web3 development",
-    created_at: "2024-03-19T15:30:00Z",
-  },
-];
-
 export default function ProfilePage() {
   const { id } = useParams();
   const router = useRouter();
   const { user } = usePrivy();
   const [profile, setProfile] = useState<Profile | null>(null);
   const isOwnProfile = user?.wallet?.address === id;
+  
+  // Fetch real profile data
+  const { data: profileData, isLoading: profileLoading } = useProfile(id as string);
+  
+  // Fetch user posts
+  const { data: postsData, isLoading: postsLoading, isError: postsError } = useUserPosts(id as string);
 
   useEffect(() => {
     // In a real app, this would be an API call
@@ -139,9 +123,30 @@ export default function ProfilePage() {
         </TabsList>
         <TabsContent value="posts">
           <div className="divide-y">
-            {dummyPosts.map((post) => (
-              <Post key={post.id} post={post} />
-            ))}
+            {postsLoading ? (
+              // Show skeletons while loading
+              Array.from({ length: 3 }).map((_, i) => (
+                <PostSkeleton key={i} />
+              ))
+            ) : postsError ? (
+              // Error state
+              <div className="text-center py-8 text-muted-foreground">
+                Failed to load posts. Please try again.
+              </div>
+            ) : postsData?.data?.length === 0 ? (
+              // Empty state
+              <div className="text-center py-8 text-muted-foreground">
+                No posts yet.
+              </div>
+            ) : (
+              // Display posts sorted by creation date (newest first)
+              postsData?.data
+                .slice()
+                .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                .map((post) => (
+                  <Post key={post.id} post={post} />
+                ))
+            )}
           </div>
         </TabsContent>
         <TabsContent value="challenges">

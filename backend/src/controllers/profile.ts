@@ -19,6 +19,31 @@ export const getProfile = async (req: Request, res: Response) => {
     }
 };
 
+export const getProfileById = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        
+        const { data: profile, error } = await supabase
+            .from("users")
+            .select("*")
+            .eq("id", id)
+            .single();
+
+        if (error) {
+            if (error.code === 'PGRST116') {
+                res.status(404).json({ error: "Profile not found" });
+                return;
+            }
+            throw error;
+        }
+
+        res.json(profile);
+    } catch (error) {
+        console.error("Error fetching profile by ID:", error);
+        res.status(500).json({ error: "Failed to fetch profile" });
+    }
+};
+
 export const getRandomProfiles = async (req: Request, res: Response) => {
     try {
         // First get the user's UUID from privy_id

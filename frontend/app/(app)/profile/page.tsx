@@ -6,9 +6,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Settings, Copy, Trophy, Star, Zap, Target, Loader2, Cake } from "lucide-react";
 import { useState } from "react";
-import { Post } from "@/components/post";
+import { Post, PostSkeleton } from "@/components/post";
 import { useRouter } from "next/navigation";
 import { useMe } from "@/services/auth/query";
+import { useUserPosts } from "@/services/posts/query";
 import { toast } from "sonner";
 
 const dummyChallenges = [
@@ -81,6 +82,13 @@ export default function ProfilePage() {
   
   // Extract user data from the API response
   const user = userData?.data?.[0];
+  
+  // Fetch user posts if user data is available
+  const { 
+    data: postsData, 
+    isLoading: postsLoading, 
+    isError: postsError 
+  } = useUserPosts(user?.id || "");
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -197,8 +205,30 @@ export default function ProfilePage() {
 
         <TabsContent value="posts">
           <div className="divide-y">
-            {/* Display posts when available, or a message when no posts */}
-            <p className="py-4 text-center text-muted-foreground">No posts available</p>
+            {postsLoading ? (
+              // Show skeletons while loading
+              Array.from({ length: 3 }).map((_, i) => (
+                <PostSkeleton key={i} />
+              ))
+            ) : postsError ? (
+              // Error state
+              <div className="py-4 text-center text-muted-foreground">
+                Error loading posts. Please try again.
+              </div>
+            ) : !postsData?.data || postsData.data.length === 0 ? (
+              // No posts state
+              <div className="py-4 text-center text-muted-foreground">
+                No posts available
+              </div>
+            ) : (
+              // Display posts sorted by creation date (newest first)
+              postsData.data
+                .slice()
+                .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                .map((post) => (
+                  <Post key={post.id} post={post} />
+                ))
+            )}
           </div>
         </TabsContent>
 
