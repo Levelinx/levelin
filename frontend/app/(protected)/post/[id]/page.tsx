@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Post, PostSkeleton } from "@/components/post";
 import { Button } from "@/components/ui/button";
@@ -10,15 +10,10 @@ import { usePost } from "@/services/posts/query";
 import { useReplyToPost, useToggleLike } from "@/services/posts/mutation";
 import { toast } from "sonner";
 
-interface PageProps {
-    params: {
-        id: string;
-    };
-}
-
-export default function PostPage({ params }: PageProps) {
+export default function PostPage() {
+    const params = useParams();
     const router = useRouter();
-    const postId = params.id;
+    const postId = params.id as string;
     const [comment, setComment] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     
