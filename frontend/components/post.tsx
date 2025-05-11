@@ -2,7 +2,6 @@ import { Post as PostType } from "@/lib/dummy-data";
 import { useRouter } from "next/navigation";
 import { MessageCircle, Heart, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
 interface PostProps {
     post: PostType;

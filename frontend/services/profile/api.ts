@@ -19,6 +19,7 @@ export async function updateProfile(data: {
     name: string;
     bio?: string;
     avatar_url?: string;
+    is_public?: boolean;
 }) {
     const response = await api.put("/api/profiles", data);
     return response.data;

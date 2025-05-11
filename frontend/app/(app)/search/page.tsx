@@ -22,7 +22,7 @@ export default function SearchPage() {
       />
       <div className="space-y-2">
         {filtered.map((u, i) => (
-          <UserCard key={i} name={u.name} avatar={u.avatar} subtitle={u.subtitle} />
+          <UserCard key={i} id={"1"} name={u.name} avatar={u.avatar} subtitle={u.subtitle} />
         ))}
         {filtered.length === 0 && <div className="text-center text-muted-foreground py-8">No results found.</div>}
       </div>

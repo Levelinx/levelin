@@ -5,6 +5,7 @@ export const ProfileSchema = z.object({
     bio: z.string().min(1, "Bio is required"),
     avatar_url: z.string().url("Invalid avatar URL"),
     date_of_birth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)"),
+    is_public: z.boolean().optional(),
 });
 
 export type ProfileInput = z.infer<typeof ProfileSchema>; 

@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Loader2, LogOut, ArrowLeft } from "lucide-react";
-import { useLogout, usePrivy } from "@privy-io/react-auth";
+import { useLogout } from "@privy-io/react-auth";
 import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -23,10 +23,9 @@ export default function SettingsPage() {
     name: me?.data?.[0]?.name || "",
     bio: me?.data?.[0]?.bio || "",
     avatar_url: me?.data?.[0]?.avatar_url || "",
+    is_public: me?.data?.[0]?.is_public ?? true,
   });
   const [isUploading, setIsUploading] = useState(false);
-  const { user } = usePrivy();
-  const [isPublic, setIsPublic] = useState(true);
 
   const handleLogout = async () => {
     logout();
@@ -74,8 +73,10 @@ export default function SettingsPage() {
   } });
 
   const handlePublicToggle = (checked: boolean) => {
-    setIsPublic(checked);
-    // Here you would make an API call to update the user's privacy settings
+    setFormData(prev => ({
+      ...prev,
+      is_public: checked
+    }));
   };
 
   return (
@@ -188,7 +189,7 @@ export default function SettingsPage() {
                 </p>
               </div>
               <Switch
-                checked={isPublic}
+                checked={formData.is_public}
                 onCheckedChange={handlePublicToggle}
               />
             </div>

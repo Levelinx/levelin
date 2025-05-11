@@ -17,6 +17,7 @@ interface MeResponse {
         solana_wallet: string;
         bio: string | null;
         avatar_url: string | null;
+        is_public: boolean;
         created_at: string;
         updated_at: string;
     }[];
