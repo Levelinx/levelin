@@ -10,6 +10,11 @@ export async function getRandomProfiles() {
     return response.data;
 }
 
+export async function searchProfiles(query: string) {
+    const response = await api.get("/api/profiles/search", { params: { query } });
+    return response.data;
+}
+
 export async function updateProfile(data: {
     name: string;
     bio?: string;
