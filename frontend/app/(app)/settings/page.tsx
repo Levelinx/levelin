@@ -14,11 +14,13 @@ import { useLogout } from "@privy-io/react-auth";
 import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function SettingsPage() {
   const router = useRouter();
   const { data: me } = useMe();
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     name: me?.data?.[0]?.name || "",
     bio: me?.data?.[0]?.bio || "",
@@ -44,6 +46,8 @@ export default function SettingsPage() {
   }, [me?.data]);
 
   const handleLogout = async () => {
+    // Invalidate all queries before logging out
+    queryClient.removeQueries();
     logout();
   };
 
