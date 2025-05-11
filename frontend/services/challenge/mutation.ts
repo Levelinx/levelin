@@ -1,12 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { createChallenge, submitChallenge, reviewChallenge } from "./api";
+import usePrivyToken from "@/hooks/usePrivyToken";
 
 export const useCreateChallenge = () => {
     const queryClient = useQueryClient();
+    const token = usePrivyToken();
 
     return useMutation({
-        mutationFn: createChallenge,
+        mutationFn: (data: Parameters<typeof createChallenge>[0]) => 
+            createChallenge(data, token),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["challenges"] });
             toast.success("Challenge created successfully");
@@ -19,10 +22,11 @@ export const useCreateChallenge = () => {
 
 export const useSubmitChallenge = () => {
     const queryClient = useQueryClient();
+    const token = usePrivyToken();
 
     return useMutation({
         mutationFn: ({ challengeId, data }: { challengeId: string; data: any }) =>
-            submitChallenge(challengeId, data),
+            submitChallenge(challengeId, data, token),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["challenges"] });
             toast.success("Challenge submitted successfully");
@@ -35,10 +39,11 @@ export const useSubmitChallenge = () => {
 
 export const useReviewChallenge = () => {
     const queryClient = useQueryClient();
+    const token = usePrivyToken();
 
     return useMutation({
         mutationFn: ({ submissionId, data }: { submissionId: string; data: any }) =>
-            reviewChallenge(submissionId, data),
+            reviewChallenge(submissionId, data, token),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["challenges"] });
             toast.success("Review submitted successfully");

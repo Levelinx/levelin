@@ -1,12 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createPost, deletePost, replyToPost, toggleLike } from "./api";
 import { toast } from "sonner";
+import usePrivyToken from "@/hooks/usePrivyToken";
 
 export const useCreatePost = () => {
     const queryClient = useQueryClient();
+    const token = usePrivyToken();
 
     return useMutation({
-        mutationFn: createPost,
+        mutationFn: (data: Parameters<typeof createPost>[0]) => 
+            createPost(data, token),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["posts"] });
             toast.success("Post created successfully");
@@ -20,10 +23,11 @@ export const useCreatePost = () => {
 
 export const useReplyToPost = () => {
     const queryClient = useQueryClient();
+    const token = usePrivyToken();
 
     return useMutation({
         mutationFn: ({ postId, content, metadata }: { postId: string; content: string; metadata?: any }) =>
-            replyToPost(postId, { content, metadata }),
+            replyToPost(postId, { content, metadata }, token),
         onSuccess: (_, { postId }) => {
             queryClient.invalidateQueries({ queryKey: ["post", postId] });
             queryClient.invalidateQueries({ queryKey: ["posts"] });
@@ -38,9 +42,10 @@ export const useReplyToPost = () => {
 
 export const useToggleLike = () => {
     const queryClient = useQueryClient();
+    const token = usePrivyToken();
 
     return useMutation({
-        mutationFn: toggleLike,
+        mutationFn: (postId: string) => toggleLike(postId, token),
         onSuccess: (_, postId) => {
             queryClient.invalidateQueries({ queryKey: ["post", postId] });
             queryClient.invalidateQueries({ queryKey: ["posts"] });
@@ -54,9 +59,10 @@ export const useToggleLike = () => {
 
 export const useDeletePost = () => {
     const queryClient = useQueryClient();
+    const token = usePrivyToken();
 
     return useMutation({
-        mutationFn: deletePost,
+        mutationFn: (id: string) => deletePost(id, token),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["posts"] });
             toast.success("Post deleted successfully");

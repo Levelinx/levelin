@@ -1,4 +1,4 @@
-import { api } from "@/utils/axios";
+import getApi from "@/utils/axios";
 
 interface SignupResponse {
     success: boolean;
@@ -24,13 +24,14 @@ interface MeResponse {
     }[];
 }
 
-export const signup = async (): Promise<SignupResponse> => {
+export const signup = async (accessToken?: string): Promise<SignupResponse> => {
+    const api = getApi(accessToken);
     const response = await api.post<SignupResponse>("/api/auth/signup");
-
     return response.data;
 };
 
-export const me = async (): Promise<MeResponse> => {
+export const me = async (accessToken?: string): Promise<MeResponse> => {
+    const api = getApi(accessToken);
     const response = await api.get<MeResponse>("/api/auth/me");
     const userData = response.data.data?.[0];
     if (!userData) {

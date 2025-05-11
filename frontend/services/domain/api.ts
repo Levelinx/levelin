@@ -1,4 +1,4 @@
-import api from "@/utils/axios";
+import getApi from "@/utils/axios";
 
 export interface Domain {
     id: string;
@@ -23,17 +23,23 @@ export interface GetDomainResponse {
     data: Domain;
 }
 
-export async function createDomain(data: { name: string; description?: string }): Promise<CreateDomainResponse> {
+export async function createDomain(
+    data: { name: string; description?: string },
+    accessToken?: string
+): Promise<CreateDomainResponse> {
+    const api = getApi(accessToken);
     const response = await api.post("/api/domain", data);
     return response.data;
 }
 
-export async function getDomains(): Promise<GetDomainsResponse> {
+export async function getDomains(accessToken?: string): Promise<GetDomainsResponse> {
+    const api = getApi(accessToken);
     const response = await api.get("/api/domain");
     return response.data;
 }
 
-export async function getDomain(id: string): Promise<GetDomainResponse> {
+export async function getDomain(id: string, accessToken?: string): Promise<GetDomainResponse> {
+    const api = getApi(accessToken);
     const response = await api.get(`/api/domain/${id}`);
     return response.data;
 }

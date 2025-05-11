@@ -1,4 +1,4 @@
-import api from "@/utils/axios";
+import getApi from "@/utils/axios";
 
 export interface User {
     id: string;
@@ -48,37 +48,54 @@ export interface ToggleLikeResponse {
     };
 }
 
-export async function getPosts(params?: { cursor?: string; limit?: number }): Promise<GetPostsResponse> {
+export async function getPosts(
+    params?: { cursor?: string; limit?: number },
+    accessToken?: string
+): Promise<GetPostsResponse> {
+    const api = getApi(accessToken);
     const response = await api.get("/api/posts", { params });
     return response.data;
 }
 
-export async function getPostById(id: string): Promise<GetPostResponse> {
+export async function getPostById(id: string, accessToken?: string): Promise<GetPostResponse> {
+    const api = getApi(accessToken);
     const response = await api.get(`/api/posts/${id}`);
     return response.data;
 }
 
-export async function createPost(data: CreatePostRequest): Promise<CreatePostResponse> {
+export async function createPost(
+    data: CreatePostRequest,
+    accessToken?: string
+): Promise<CreatePostResponse> {
+    const api = getApi(accessToken);
     const response = await api.post("/api/posts", data);
     return response.data;
 }
 
-export async function toggleLike(postId: string): Promise<ToggleLikeResponse> {
+export async function toggleLike(postId: string, accessToken?: string): Promise<ToggleLikeResponse> {
+    const api = getApi(accessToken);
     const response = await api.post(`/api/posts/${postId}/like`);
     return response.data;
 }
 
-export async function replyToPost(postId: string, data: CreatePostRequest): Promise<CreatePostResponse> {
+export async function replyToPost(
+    postId: string,
+    data: CreatePostRequest,
+    accessToken?: string
+): Promise<CreatePostResponse> {
+    const api = getApi(accessToken);
     const response = await api.post(`/api/posts/${postId}/reply`, data);
     return response.data;
 }
 
-export async function deletePost(id: string): Promise<{ success: boolean }> {
+export async function deletePost(id: string, accessToken?: string): Promise<{ success: boolean }> {
+    const api = getApi(accessToken);
     const response = await api.delete(`/api/posts/${id}`);
     return response.data;
 }
 
-export async function getUserPosts(userId: string): Promise<{ data: Post[] }> {
+export async function getUserPosts(userId: string, accessToken?: string): Promise<{ data: Post[] }> {
+    const api = getApi(accessToken);
     const response = await api.get(`/api/posts/user/${userId}`);
     return response.data;
 } 
