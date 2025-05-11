@@ -46,11 +46,6 @@ export default function ReviewPage() {
                   ></div>
                 </div>
               </div>
-              <Link href="/challenges">
-                <Button className="gap-2">
-                  Find Challenges
-                </Button>
-              </Link>
             </>
           ) : (
             <>
