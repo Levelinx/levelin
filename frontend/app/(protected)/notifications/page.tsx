@@ -52,14 +52,7 @@ export default function NotificationsPage() {
           Notifications
         </h1>
         <div className="flex gap-2 ml-auto">
-          <button className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center gap-2">
-            <Check className="w-4 h-4" />
-            Mark all as read
-          </button>
-          <button className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center gap-2">
-            <Trash2 className="w-4 h-4" />
-            Clear all
-          </button>
+          
         </div>
       </div>
 

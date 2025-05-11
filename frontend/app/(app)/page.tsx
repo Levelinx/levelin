@@ -7,9 +7,10 @@ import Image from "next/image";
 import { dummyPosts } from "@/lib/dummy-data";
 import { Post, PostSkeleton } from "@/components/post";
 import { useEffect, useState } from "react";
+import { useMe } from "@/services/auth/query";
 
 export default function Home() {
-    // const { data: me } = useMe();
+    const { data: me } = useMe();
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -19,6 +20,8 @@ export default function Home() {
 
         return () => clearTimeout(timer);
     }, []);
+
+    console.log("me", me);
 
     return (
         <div className="container max-w-2xl">

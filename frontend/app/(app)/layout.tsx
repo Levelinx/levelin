@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePrivy } from "@privy-io/react-auth";
 import Splash from "@/components/widgets/splash";
-
+import { useMe } from "@/services/auth/query";
 const tabs = [
     {
         name: "Home",
@@ -51,6 +51,7 @@ export default function AppLayout({
     const lastMoveTime = useRef<number>(0);
     const [isMobile, setIsMobile] = useState(false);
     const { ready, authenticated } = usePrivy();
+    const { data: me, isLoading } = useMe();
 
     // Detect mobile on mount and on resize
     useEffect(() => {
@@ -108,7 +109,6 @@ export default function AppLayout({
         return () => window.removeEventListener("mousemove", handleMouseMove);
     }, [forceShow, isMobile]);
 
-    // Animation variants for fast show and slow hide
     const variants = {
         hidden: {
             y: 100,
@@ -127,8 +127,13 @@ export default function AppLayout({
     if (!ready) {
         return <Splash />;
     }
+
     if (ready && !authenticated) {
         redirect("/signin");
+    }
+
+    if (!isLoading && !(me?.data?.[0]?.onboarding_completed)) {
+        redirect("/onboarding");
     }
 
     return (
