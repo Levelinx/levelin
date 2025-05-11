@@ -1,74 +1,105 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Post } from "@/components/post";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft } from "lucide-react";
-import { Post as PostType, Comment } from "@/lib/dummy-data";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import { usePost } from "@/services/posts/query";
+import { useReplyToPost, useToggleLike } from "@/services/posts/mutation";
+import { toast } from "sonner";
 
-// This would normally come from an API
-const dummyPost: PostType = {
-    id: "1",
-    content: "This is a sample post",
-    created_at: new Date().toISOString(),
-    user: {
-        id: "1",
-        name: "John Doe",
-        avatar_url: "https://github.com/shadcn.png",
-    },
-    comments: [
-        {
-            id: "1",
-            content: "This is a comment",
-            created_at: new Date().toISOString(),
-            user: {
-                id: "2",
-                name: "Jane Smith",
-                avatar_url: "https://github.com/shadcn.png",
-            },
-            replies: [
-                {
-                    id: "2",
-                    content: "This is a reply",
-                    created_at: new Date().toISOString(),
-                    user: {
-                        id: "1",
-                        name: "John Doe",
-                        avatar_url: "https://github.com/shadcn.png",
-                    },
-                },
-            ],
-        },
-    ],
-};
+interface PageProps {
+    params: {
+        id: string;
+    };
+}
 
-export default function PostPage() {
+export default function PostPage({ params }: PageProps) {
     const router = useRouter();
+    const postId = params.id;
     const [comment, setComment] = useState("");
-    const [replyTo, setReplyTo] = useState<string | null>(null);
-
-    // Flatten comments and replies into a single array
-    const flatComments = (dummyPost.comments || []).reduce<Comment[]>((acc, comment) => {
-        acc.push(comment);
-        if (comment.replies) {
-            acc.push(...comment.replies);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    
+    // Fetch post and replies
+    const { 
+        data: postData, 
+        isLoading, 
+        isError, 
+        error, 
+        refetch
+    } = usePost(postId);
+    
+    // Mutations
+    const { mutate: replyToPost } = useReplyToPost();
+    const { mutate: toggleLike } = useToggleLike();
+    
+    // Handle error
+    useEffect(() => {
+        if (isError && error) {
+            toast.error("Failed to load post. Please try again.");
+            console.error("Error loading post:", error);
         }
-        return acc;
-    }, []);
+    }, [isError, error]);
 
-    const handleSubmitComment = (e: React.FormEvent) => {
+    const handleSubmitComment = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Here you would normally submit the comment to your API
-        console.log("Submitting comment:", comment, "Replying to:", replyTo);
-        setComment("");
-        setReplyTo(null);
+        
+        if (!comment.trim()) {
+            toast.error("Please enter a comment");
+            return;
+        }
+        
+        setIsSubmitting(true);
+        
+        replyToPost(
+            { 
+                postId, 
+                content: comment 
+            },
+            {
+                onSuccess: () => {
+                    setComment("");
+                    refetch();
+                },
+                onSettled: () => {
+                    setIsSubmitting(false);
+                }
+            }
+        );
     };
 
-    const handleCommentClick = (id: string) => {
-        router.push(`/post/${id}`);
+    const handleLike = () => {
+        toggleLike(postId, {
+            onSuccess: () => {
+                refetch();
+            }
+        });
     };
+
+    // Loading state
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center h-96">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+        );
+    }
+    
+    // Error state
+    if (isError || !postData) {
+        return (
+            <div className="max-w-2xl mx-auto p-8 text-center">
+                <p className="text-muted-foreground mb-4">Could not load post. It might have been deleted or you don't have permission to view it.</p>
+                <Button onClick={() => router.push('/')}>Return Home</Button>
+            </div>
+        );
+    }
+    
+    const { post, replies } = postData;
+    const likeCount = post.likes?.[0]?.count || 0;
+    const replyCount = replies?.length || 0;
 
     return (
         <div className="max-w-2xl mx-auto relative pb-32">
@@ -86,41 +117,62 @@ export default function PostPage() {
                 </div>
             </div>
 
-            <Post post={dummyPost} showActions={false} />
+            {/* Main Post */}
+            <Post post={post} showActions={false} />
 
             {/* Likes and comments count */}
-            <div className="flex gap-6 px-4 py-2 border-b text-muted-foreground">
-                <span><b>{flatComments.length}</b> Comments</span>
-                <span><b>{dummyPost.likes || 0}</b> Likes</span>
+            <div className="flex justify-between px-4 py-3 border-b">
+                <div className="flex gap-6 text-muted-foreground">
+                    <span><b>{replyCount}</b> {replyCount === 1 ? 'Comment' : 'Comments'}</span>
+                    <span><b>{likeCount}</b> {likeCount === 1 ? 'Like' : 'Likes'}</span>
+                </div>
+                <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={handleLike}
+                    className="text-muted-foreground hover:text-primary"
+                >
+                    Like
+                </Button>
             </div>
 
-            {/* Flat list of comments and replies as posts */}
+            {/* Comments section */}
             <div>
-                {flatComments.map((item) => (
-                    <div key={item.id} onClick={() => handleCommentClick(item.id)} className="cursor-pointer border-b hover:bg-muted/50 transition-colors">
-                        <Post post={item} showActions={true} />
+                {replies.length === 0 && (
+                    <div className="p-8 text-center text-muted-foreground">
+                        No comments yet. Be the first to comment!
+                    </div>
+                )}
+                
+                {replies.map((reply) => (
+                    <div key={reply.id} className="border-b">
+                        <Post post={reply} showActions={false} />
                     </div>
                 ))}
             </div>
 
             {/* Fixed comment input at the bottom */}
             <form onSubmit={handleSubmitComment} className="fixed bottom-0 left-0 right-0 bg-background border-t z-50 max-w-2xl mx-auto p-4 flex flex-col gap-2">
-                {replyTo && (
-                    <div className="text-xs text-muted-foreground mb-1">
-                        Replying to comment ID: {replyTo}
-                        <Button variant="link" size="sm" className="ml-2 p-0 h-auto text-xs" onClick={() => setReplyTo(null)}>
-                            Cancel
-                        </Button>
-                    </div>
-                )}
                 <Textarea
-                    placeholder={replyTo ? "Write a reply..." : "Write a comment..."}
+                    placeholder="Write a comment..."
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     rows={2}
+                    disabled={isSubmitting}
                 />
-                <Button type="submit" className="w-full">
-                    {replyTo ? "Reply" : "Comment"}
+                <Button 
+                    type="submit" 
+                    className="w-full"
+                    disabled={!comment.trim() || isSubmitting}
+                >
+                    {isSubmitting ? (
+                        <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Posting...
+                        </>
+                    ) : (
+                        "Post Comment"
+                    )}
                 </Button>
             </form>
         </div>
