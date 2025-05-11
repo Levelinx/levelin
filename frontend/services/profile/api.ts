@@ -14,7 +14,7 @@ export async function getRandomProfiles(accessToken?: string) {
 
 export async function searchProfiles(query: string, accessToken?: string) {
     const api = getApi(accessToken);
-    const response = await api.get("/api/profiles/search", { params: { query } });
+    const response = await api.get("/api/profiles/search", { params: { search: query } });
     return response.data;
 }
 

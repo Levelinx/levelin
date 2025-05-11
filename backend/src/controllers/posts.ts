@@ -162,7 +162,7 @@ export const replyToPost = async (req: Request, res: Response): Promise<void> =>
 };
 
 // (Optional) DELETE /posts/:id
-export const deletePost = async (req: Request, res: Response) => {
+export const deletePost = async (req: Request, res: Response): Promise<void> => {
   try {
     const privyId = req.user.id || req.user.privyId;
     const userId = await getUserIdFromPrivyId(privyId);
@@ -173,8 +173,14 @@ export const deletePost = async (req: Request, res: Response) => {
       .select('user_id')
       .eq('id', id)
       .single();
-    if (postError || !post) return res.status(404).json({ error: 'Post not found' });
-    if (post.user_id !== userId) return res.status(403).json({ error: 'Forbidden' });
+    if (postError || !post) {
+      res.status(404).json({ error: 'Post not found' });
+      return;
+    }
+    if (post.user_id !== userId) {
+      res.status(403).json({ error: 'Forbidden' });
+      return;
+    }
     const { error } = await supabase
       .from('posts')
       .delete()

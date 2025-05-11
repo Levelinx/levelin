@@ -1,17 +1,31 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { UserCard } from "@/components/widgets/UserCard";
+import { useSearchProfiles } from "@/services/profile/query";
+import { UserCardSkeleton } from "@/components/widgets/ProfileSkeleton";
+import { useDebounce } from "@/hooks/useDebounce";
 
-const dummyUsers = [
-  { name: "Alice Johnson", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice", subtitle: "Solana Dev" },
-  { name: "Bob Lee", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bob", subtitle: "Rust Expert" },
-  { name: "Carol Smith", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Carol", subtitle: "Smart Contract Auditor" },
-  { name: "David Kim", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=David", subtitle: "Frontend Wizard" },
-];
+interface Profile {
+  id: string;
+  name: string;
+  avatar_url?: string;
+  title?: string;
+}
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
-  const filtered = dummyUsers.filter(u => u.name.toLowerCase().includes(query.toLowerCase()));
+  const debouncedQuery = useDebounce(query, 500);
+  
+  // Use the search profiles API
+  const { 
+    data: searchResults, 
+    isLoading, 
+    isError 
+  } = useSearchProfiles(debouncedQuery);
+  
+  // Get profiles from search results
+  const profiles = searchResults?.data || [];
+  
   return (
     <div className="max-w-2xl mx-auto py-4">
       <input
@@ -20,11 +34,40 @@ export default function SearchPage() {
         value={query}
         onChange={e => setQuery(e.target.value)}
       />
+      
       <div className="space-y-2">
-        {filtered.map((u, i) => (
-          <UserCard key={i} id={"1"} name={u.name} avatar={u.avatar} subtitle={u.subtitle} />
-        ))}
-        {filtered.length === 0 && <div className="text-center text-muted-foreground py-8">No results found.</div>}
+        {isLoading ? (
+          // Loading state with skeletons
+          Array.from({ length: 3 }).map((_, index) => (
+            <UserCardSkeleton key={index} />
+          ))
+        ) : isError ? (
+          // Error state
+          <div className="text-center text-muted-foreground py-8">
+            Error loading results. Please try again.
+          </div>
+        ) : !debouncedQuery ? (
+          // Initial state
+          <div className="text-center text-muted-foreground py-8">
+            Start typing to search for users...
+          </div>
+        ) : profiles.length === 0 ? (
+          // Empty results state
+          <div className="text-center text-muted-foreground py-8">
+            No results found for "{debouncedQuery}".
+          </div>
+        ) : (
+          // Results
+          profiles.map((profile: Profile) => (
+            <UserCard 
+              key={profile.id}
+              id={profile.id}
+              name={profile.name}
+              avatar={profile.avatar_url || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + profile.name}
+              subtitle={profile.title || "User"}
+            />
+          ))
+        )}
       </div>
     </div>
   );

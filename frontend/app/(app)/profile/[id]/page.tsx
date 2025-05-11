@@ -1,7 +1,6 @@
 "use client";
 import { usePrivy } from "@privy-io/react-auth";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Settings, ArrowLeft } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -9,53 +8,12 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Post, PostSkeleton } from "@/components/post";
 import { useProfile } from "@/services/profile/query";
 import { useUserPosts } from "@/services/posts/query";
-
-interface Profile {
-  id: string;
-  name: string;
-  avatar: string;
-  bio: string;
-  isPublic: boolean;
-  stats: {
-    posts: number;
-    followers: number;
-    following: number;
-  };
-}
-
-// Dummy data for demonstration
-const dummyProfiles: Record<string, Profile> = {
-  "user1": {
-    id: "user1",
-    name: "Alice Johnson",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice",
-    bio: "Web3 enthusiast and blockchain developer",
-    isPublic: true,
-    stats: {
-      posts: 15,
-      followers: 234,
-      following: 123
-    }
-  },
-  "user2": {
-    id: "user2",
-    name: "Bob Lee",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bob",
-    bio: "AI researcher and machine learning expert",
-    isPublic: true,
-    stats: {
-      posts: 20,
-      followers: 456,
-      following: 234
-    }
-  }
-};
+import { ProfileSkeleton } from "@/components/widgets/ProfileSkeleton";
 
 export default function ProfilePage() {
   const { id } = useParams();
   const router = useRouter();
   const { user } = usePrivy();
-  const [profile, setProfile] = useState<Profile | null>(null);
   const isOwnProfile = user?.wallet?.address === id;
   
   // Fetch real profile data
@@ -64,17 +22,13 @@ export default function ProfilePage() {
   // Fetch user posts
   const { data: postsData, isLoading: postsLoading, isError: postsError } = useUserPosts(id as string);
 
-  useEffect(() => {
-    // In a real app, this would be an API call
-    const profileData = dummyProfiles[id as string];
-    if (profileData) {
-      setProfile(profileData);
-    }
-  }, [id]);
-
-  if (!profile) {
-    return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+  // Show loading state while fetching profile data
+  if (profileLoading || !profileData) {
+    return <ProfileSkeleton />;
   }
+
+  // Extract profile data
+  const profile = profileData;
 
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
@@ -90,18 +44,18 @@ export default function ProfilePage() {
           </Button>
         )}
         <Avatar className="h-24 w-24">
-          <AvatarImage src={profile.avatar} alt={profile.name} />
-          <AvatarFallback>{profile.name[0]}</AvatarFallback>
+          <AvatarImage src={profile.avatar_url || ""} alt={profile.name} />
+          <AvatarFallback>{profile.name ? profile.name[0] : "U"}</AvatarFallback>
         </Avatar>
         <div>
           <h1 className="text-2xl font-bold">{profile.name}</h1>
-          <div className="text-muted-foreground">Solana Dev</div>
+          <div className="text-muted-foreground">{profile.title || "User"}</div>
           <div className="flex gap-4 mt-1 text-sm">
-            <span><b>12</b> challenges</span>
-            <span><b>8</b> reviews</span>
-            <span><b>1500</b> reputation</span>
+            <span><b>0</b> challenges</span>
+            <span><b>0</b> reviews</span>
+            <span><b>0</b> reputation</span>
           </div>
-          <p className="text-muted-foreground mt-2">Building on Solana. Love Rust and DeFi. Always up for a challenge!</p>
+          <p className="text-muted-foreground mt-2">{profile.bio || "No bio available"}</p>
         </div>
         {isOwnProfile && (
           <Button
