@@ -9,8 +9,8 @@ const app: Application = express();
 // Middleware
 app.use(cors({ 
   origin: process.env.NODE_ENV === 'production' 
-    ? 'https://web.levelin.fun'  // Production frontend URL
-    : 'http://localhost:3000',   // Development frontend URL
+    ? ['https://web.levelin.fun', 'https://domain.levelin.fun']  // Production frontend URLs
+    : ['http://localhost:3000', 'http://localhost:3001'],   // Development frontend URLs
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],

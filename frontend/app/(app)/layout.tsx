@@ -132,7 +132,8 @@ export default function AppLayout({
         redirect("/signin");
     }
 
-    if (!isLoading && !(me?.data?.[0]?.onboarding_completed)) {
+    if (!isLoading && me?.data?.[0] && me.data[0].onboarding_completed === false) {
+        console.log("Onboarding not completed in app layout", me);
         redirect("/onboarding");
     }
 

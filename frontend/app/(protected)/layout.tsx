@@ -13,7 +13,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
     return <Splash />;
   }
 
-  if (!isLoading && !(me?.data?.[0]?.onboarding_completed)) {
+  if (!isLoading && me?.data?.[0] && me.data[0].onboarding_completed === false) {
     console.log("Onboarding not completed", me);
     if (window.location.pathname !== "/onboarding") {
       redirect("/onboarding");
