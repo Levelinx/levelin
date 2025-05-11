@@ -91,9 +91,29 @@ export default function ProfilePage() {
   } = useUserPosts(user?.id || "");
 
   const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        setCopied(true);
+        toast.success("Copied to clipboard");
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch(err => {
+        console.error("Failed to copy: ", err);
+        toast.error("Failed to copy to clipboard");
+      });
+  };
+
+  // Add some UI for the copy button using the 'copied' state
+  const CopyButton = ({ textToCopy }: { textToCopy: string }) => {
+    return (
+      <button
+        onClick={() => copyToClipboard(textToCopy)}
+        className="ml-2 p-1 rounded-md hover:bg-muted"
+        aria-label="Copy to clipboard"
+      >
+        <Copy className={`h-4 w-4 ${copied ? 'text-green-500' : 'text-muted-foreground'}`} />
+      </button>
+    );
   };
 
   const getRarityColor = (rarity: string) => {
@@ -272,18 +292,7 @@ export default function ProfilePage() {
                   { user.solana_wallet || "No wallet connected"}
                 </p>
                 {(user.solana_wallet) && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                      if (user.solana_wallet) {
-                        copyToClipboard(user.solana_wallet);
-                        toast.success("Copied to clipboard");
-                      }
-                    }}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
+                  <CopyButton textToCopy={user.solana_wallet} />
                 )}
               </div>
             </CardContent>

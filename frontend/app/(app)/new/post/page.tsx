@@ -126,7 +126,7 @@ export default function NewPostPage() {
             date={new Date().toLocaleDateString()}
           />
           <p className="text-sm text-muted-foreground mt-4">
-            Click "Create Post" to publish your post.
+            Click &quot;Create Post&quot; to publish your post.
           </p>
         </motion.div>
       )}

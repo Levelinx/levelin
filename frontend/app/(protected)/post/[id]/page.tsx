@@ -82,7 +82,7 @@ export default function PostPage({ params }: PageProps) {
     if (isError || (!isLoading && !postData)) {
         return (
             <div className="max-w-2xl mx-auto p-8 text-center">
-                <p className="text-muted-foreground mb-4">Could not load post. It might have been deleted or you don't have permission to view it.</p>
+                <p className="text-muted-foreground mb-4">Could not load post. It might have been deleted or you don&apos;t have permission to view it.</p>
                 <Button onClick={() => router.push('/')}>Return Home</Button>
             </div>
         );

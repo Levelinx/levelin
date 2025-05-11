@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { UserCard } from "@/components/widgets/UserCard";
 import { useSearchProfiles } from "@/services/profile/query";
 import { UserCardSkeleton } from "@/components/widgets/ProfileSkeleton";
@@ -54,7 +54,7 @@ export default function SearchPage() {
         ) : profiles.length === 0 ? (
           // Empty results state
           <div className="text-center text-muted-foreground py-8">
-            No results found for "{debouncedQuery}".
+            No results found for &quot;{debouncedQuery}&quot;.
           </div>
         ) : (
           // Results

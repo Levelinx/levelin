@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 export function PostCard({
   name,
@@ -36,11 +36,12 @@ export function PostCard({
     <div className="p-4 border-b">
       <div className="flex items-center gap-3">
         <div className="relative w-10 h-10 rounded-full overflow-hidden bg-muted">
-          {/* Use regular img element for better error handling */}
-          <img 
+          <Image 
             src={imgError ? fallbackAvatar : imgSrc} 
             alt={name} 
-            className="w-10 h-10 rounded-full object-cover"
+            width={40}
+            height={40}
+            className="rounded-full object-cover"
             onError={() => setImgError(true)}
           />
         </div>

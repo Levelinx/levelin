@@ -1,8 +1,6 @@
 import { Bell, Check, Trash2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-// Dummy notification data
-
 interface Notification {
   id: number;
   type: string;

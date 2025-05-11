@@ -17,7 +17,7 @@ interface Post {
     user: User;
     user_id?: string;
     parent_id?: string | null;
-    metadata?: any;
+    metadata?: Record<string, unknown>;
     updated_at?: string;
     likes?: { count: number }[];
     replies?: { count: number }[];
