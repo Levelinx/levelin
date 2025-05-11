@@ -6,15 +6,13 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Post, PostSkeleton } from "@/components/post";
 import { useEffect, useState } from "react";
-import { useMe } from "@/services/auth/query";
 import { usePosts } from "@/services/posts/query";
 import { useInView } from "react-intersection-observer";
 import { toast } from "sonner";
 
 export default function Home() {
-    const { } = useMe(); // Keep the query but don't destructure anything
     const { ref, inView } = useInView();
-    const [unreadNotifications] = useState(3); // This would be dynamic in the future
+    const [unreadNotifications] = useState(0); // This would be dynamic in the future
     
     // Fetch posts with infinite scroll
     const { 
