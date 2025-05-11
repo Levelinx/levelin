@@ -15,6 +15,8 @@ import axios, {
   api.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
       try {
+        // Ensure credentials are included in every request
+        config.withCredentials = true;
         return config;
       } catch (error) {
         console.error("Error in request interceptor:", error);
