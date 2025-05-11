@@ -4,111 +4,83 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Copy, Trophy, Star, Zap, Target } from "lucide-react";
+import { Settings, Copy, Trophy, Star, Zap, Target, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Post } from "@/components/post";
 import { useRouter } from "next/navigation";
+import { useMe } from "@/services/auth/query";
+import { toast } from "sonner";
 
-const dummyUser = {
-  name: "Alice Johnson",
-  avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice",
-  subtitle: "Solana Dev",
-  bio: "Building on Solana. Love Rust and DeFi. Always up for a challenge!",
-  stats: {
-    challenges: 12,
-    reviews: 8,
-    reputation: 1500,
+const dummyChallenges = [
+  {
+    id: 1,
+    title: "Complete 5 Smart Contracts",
+    progress: 3,
+    total: 5,
   },
-  balance: 1250.50,
-  walletAddress: "0x1234...5678",
-  posts: [
-    {
-      id: "1",
-      user: {
-        id: "1",
-        name: "Alice Johnson",
-        avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice",
-      },
-      content: "Just completed my first smart contract! 🚀",
-      created_at: "2024-03-20T10:00:00Z",
-    },
-    {
-      id: "2",
-      user: {
-        id: "1",
-        name: "Alice Johnson",
-        avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice",
-      },
-      content: "Exploring the world of Web3 development",
-      created_at: "2024-03-19T15:30:00Z",
-    },
-  ],
-  challenges: [
-    {
-      id: 1,
-      title: "Complete 5 Smart Contracts",
-      progress: 3,
-      total: 5,
-    },
-    {
-      id: 2,
-      title: "Earn 1000 Points",
-      progress: 750,
-      total: 1000,
-    },
-  ],
-  holdings: [
-    {
-      token: "ETH",
-      amount: 2.5,
-      value: 5000,
-    },
-    {
-      token: "USDC",
-      amount: 1000,
-      value: 1000,
-    },
-  ],
-  achievements: [
-    {
-      id: 1,
-      title: "Early Adopter",
-      description: "Joined during the beta phase",
-      icon: Star,
-      unlockedAt: "2024-01-15",
-      rarity: "rare",
-    },
-    {
-      id: 2,
-      title: "Challenge Master",
-      description: "Completed 10 challenges",
-      icon: Trophy,
-      unlockedAt: "2024-02-20",
-      rarity: "epic",
-    },
-    {
-      id: 3,
-      title: "Speed Demon",
-      description: "Completed a challenge in under 24 hours",
-      icon: Zap,
-      unlockedAt: "2024-03-01",
-      rarity: "legendary",
-    },
-    {
-      id: 4,
-      title: "Perfect Score",
-      description: "Achieved 100% on a challenge",
-      icon: Target,
-      unlockedAt: "2024-03-15",
-      rarity: "epic",
-    },
-  ],
-};
+  {
+    id: 2,
+    title: "Earn 1000 Points",
+    progress: 750,
+    total: 1000,
+  },
+];
+
+const dummyHoldings = [
+  {
+    token: "ETH",
+    amount: 2.5,
+    value: 5000,
+  },
+  {
+    token: "USDC",
+    amount: 1000,
+    value: 1000,
+  },
+];
+
+const dummyAchievements = [
+  {
+    id: 1,
+    title: "Early Adopter",
+    description: "Joined during the beta phase",
+    icon: Star,
+    unlockedAt: "2024-01-15",
+    rarity: "rare",
+  },
+  {
+    id: 2,
+    title: "Challenge Master",
+    description: "Completed 10 challenges",
+    icon: Trophy,
+    unlockedAt: "2024-02-20",
+    rarity: "epic",
+  },
+  {
+    id: 3,
+    title: "Speed Demon",
+    description: "Completed a challenge in under 24 hours",
+    icon: Zap,
+    unlockedAt: "2024-03-01",
+    rarity: "legendary",
+  },
+  {
+    id: 4,
+    title: "Perfect Score",
+    description: "Achieved 100% on a challenge",
+    icon: Target,
+    unlockedAt: "2024-03-15",
+    rarity: "epic",
+  },
+];
 
 export default function ProfilePage() {
   const [copied, setCopied] = useState(false);
   const router = useRouter();
-  console.log(copied);
+  const { data: userData, isLoading } = useMe();
+  
+  // Extract user data from the API response
+  const user = userData?.data?.[0];
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -129,6 +101,31 @@ export default function ProfilePage() {
     }
   };
 
+  // Show loading state while fetching user data
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // If user data is not available, show a message
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-muted-foreground">User profile not found</p>
+      </div>
+    );
+  }
+
+  // Define user stats (these would ideally come from the API in the future)
+  const userStats = {
+    challenges: 12,
+    reviews: 8,
+    reputation: 1500,
+  };
+
   return (
     <div className="max-w-2xl mx-auto py-4">
       <div className="relative mb-6">
@@ -145,23 +142,22 @@ export default function ProfilePage() {
       {/* Profile Header */}
       <div className="flex items-center gap-6 mb-8">
         <Avatar className="h-24 w-24">
-          <AvatarImage src={dummyUser.avatar} />
-          <AvatarFallback>{dummyUser.name[0]}</AvatarFallback>
+          <AvatarImage src={user.avatar_url || ""} />
+          <AvatarFallback>{user.name ? user.name[0] : "U"}</AvatarFallback>
         </Avatar>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold">{dummyUser.name}</h1>
-          <p className="text-muted-foreground mb-2">{dummyUser.subtitle}</p>
+          <h1 className="text-2xl font-bold">{user.name}</h1>
           <div className="flex gap-4">
             <div>
-              <span className="font-semibold">{dummyUser.stats.challenges}</span>{" "}
+              <span className="font-semibold">{userStats.challenges}</span>{" "}
               <span className="text-muted-foreground">challenges</span>
             </div>
             <div>
-              <span className="font-semibold">{dummyUser.stats.reviews}</span>{" "}
+              <span className="font-semibold">{userStats.reviews}</span>{" "}
               <span className="text-muted-foreground">reviews</span>
             </div>
             <div>
-              <span className="font-semibold">{dummyUser.stats.reputation}</span>{" "}
+              <span className="font-semibold">{userStats.reputation}</span>{" "}
               <span className="text-muted-foreground">reputation</span>
             </div>
           </div>
@@ -170,7 +166,7 @@ export default function ProfilePage() {
 
       {/* Bio */}
       <div className="mb-8">
-        <p className="text-muted-foreground">{dummyUser.bio}</p>
+        <p className="text-muted-foreground">{user.bio || "No bio available"}</p>
       </div>
 
       {/* Tabs */}
@@ -184,15 +180,14 @@ export default function ProfilePage() {
 
         <TabsContent value="posts">
           <div className="divide-y">
-            {dummyUser.posts.map((post) => (
-              <Post key={post.id} post={post} />
-            ))}
+            {/* Display posts when available, or a message when no posts */}
+            <p className="py-4 text-center text-muted-foreground">No posts available</p>
           </div>
         </TabsContent>
 
         <TabsContent value="challenges">
           <div className="space-y-4">
-            {dummyUser.challenges.map((challenge) => (
+            {dummyChallenges.map((challenge) => (
               <Card key={challenge.id}>
                 <CardContent className="pt-6">
                   <h3 className="font-semibold mb-2">{challenge.title}</h3>
@@ -219,7 +214,7 @@ export default function ProfilePage() {
               <div className="flex justify-between items-center mb-4">
                 <div>
                   <p className="text-sm text-muted-foreground">Balance</p>
-                  <p className="text-2xl font-bold">${dummyUser.balance}</p>
+                  <p className="text-2xl font-bold">$0.00</p>
                 </div>
                 <Button variant="outline" size="sm">
                   Add Funds
@@ -227,31 +222,37 @@ export default function ProfilePage() {
               </div>
               <div className="flex items-center gap-2">
                 <p className="text-sm text-muted-foreground">
-                  {dummyUser.walletAddress}
+                  { user.solana_wallet || "No wallet connected"}
                 </p>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => copyToClipboard(dummyUser.walletAddress)}
-                >
-                  <Copy className="h-4 w-4" />
-                </Button>
+                {(user.solana_wallet) && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      if (user.solana_wallet) {
+                        copyToClipboard(user.solana_wallet);
+                        toast.success("Copied to clipboard");
+                      }
+                    }}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>
 
           <div className="space-y-4">
-            {dummyUser.holdings.map((holding) => (
+            {dummyHoldings.map((holding) => (
               <Card key={holding.token}>
-                <CardContent className="pt-6">
+                <CardContent className="">
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="font-semibold">{holding.token}</p>
                       <p className="text-sm text-muted-foreground">
-                        {holding.amount} tokens
+                        {holding.amount} (${holding.value})
                       </p>
                     </div>
-                    <p className="font-semibold">${holding.value}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -260,12 +261,16 @@ export default function ProfilePage() {
         </TabsContent>
 
         <TabsContent value="achievements">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {dummyUser.achievements.map((achievement) => (
+          <div className="grid grid-cols-2 gap-4">
+            {dummyAchievements.map((achievement) => (
               <Card key={achievement.id}>
                 <CardContent className="pt-6">
-                  <div className="flex items-start gap-4">
-                    <div className={`p-2 rounded-lg bg-muted ${getRarityColor(achievement.rarity)}`}>
+                  <div className="flex items-start gap-3">
+                    <div
+                      className={`p-2 rounded-full bg-secondary ${getRarityColor(
+                        achievement.rarity
+                      )}`}
+                    >
                       <achievement.icon className="h-6 w-6" />
                     </div>
                     <div>
@@ -273,8 +278,12 @@ export default function ProfilePage() {
                       <p className="text-sm text-muted-foreground">
                         {achievement.description}
                       </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Unlocked on {new Date(achievement.unlockedAt).toLocaleDateString()}
+                      <p
+                        className={`text-xs mt-1 ${getRarityColor(
+                          achievement.rarity
+                        )}`}
+                      >
+                        {achievement.rarity}
                       </p>
                     </div>
                   </div>
