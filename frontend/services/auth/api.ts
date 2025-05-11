@@ -37,6 +37,8 @@ export const me = async (): Promise<MeResponse> => {
         throw new Error("User data not found");
     }
     if (userData && (!userData.name || !userData.bio || !userData.avatar_url)) {
+        console.log("User data not found");
+        console.log(userData);
         response.data.data[0].onboarding_completed = false;
     } else {
         response.data.data[0].onboarding_completed = true;
