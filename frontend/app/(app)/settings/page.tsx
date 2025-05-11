@@ -7,11 +7,14 @@ import { useUpdateProfile } from "@/services/profile/mutation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Loader2, LogOut, ArrowLeft } from "lucide-react";
-import { useLogout } from "@privy-io/react-auth";
+import { useLogout, usePrivy } from "@privy-io/react-auth";
 import { toast } from "sonner";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+
 export default function SettingsPage() {
   const router = useRouter();
   const { data: me } = useMe();
@@ -22,6 +25,8 @@ export default function SettingsPage() {
     avatar_url: me?.data?.[0]?.avatar_url || "",
   });
   const [isUploading, setIsUploading] = useState(false);
+  const { user } = usePrivy();
+  const [isPublic, setIsPublic] = useState(true);
 
   const handleLogout = async () => {
     logout();
@@ -67,6 +72,11 @@ export default function SettingsPage() {
     toast.success("Logged out successfully");
     router.push("/signin");
   } });
+
+  const handlePublicToggle = (checked: boolean) => {
+    setIsPublic(checked);
+    // Here you would make an API call to update the user's privacy settings
+  };
 
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
@@ -161,6 +171,27 @@ export default function SettingsPage() {
               <LogOut className="mr-2 h-4 w-4" />
               Logout
             </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Privacy Settings</CardTitle>
+            <CardDescription>Control who can see your profile and content</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Public Profile</Label>
+                <p className="text-sm text-muted-foreground">
+                  When enabled, your profile will be visible to everyone
+                </p>
+              </div>
+              <Switch
+                checked={isPublic}
+                onCheckedChange={handlePublicToggle}
+              />
+            </div>
           </CardContent>
         </Card>
       </form>
