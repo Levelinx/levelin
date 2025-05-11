@@ -24,6 +24,7 @@ export async function updateProfile(
         bio?: string;
         avatar_url?: string;
         is_public?: boolean;
+        date_of_birth?: string;
     },
     accessToken?: string
 ) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useMe } from "@/services/auth/query";
 import { useUpdateProfile } from "@/services/profile/mutation";
@@ -24,8 +24,24 @@ export default function SettingsPage() {
     bio: me?.data?.[0]?.bio || "",
     avatar_url: me?.data?.[0]?.avatar_url || "",
     is_public: me?.data?.[0]?.is_public ?? true,
+    date_of_birth: "",
   });
   const [isUploading, setIsUploading] = useState(false);
+
+  // Format the date of birth when the component mounts or data changes
+  useEffect(() => {
+    if (me?.data?.[0]?.date_of_birth) {
+      // Convert the date to the yyyy-MM-dd format required by the date input
+      const dateObj = new Date(me.data[0].date_of_birth);
+      if (!isNaN(dateObj.getTime())) {
+        const formattedDate = dateObj.toISOString().split('T')[0]; // Get yyyy-MM-dd part
+        setFormData(prev => ({
+          ...prev,
+          date_of_birth: formattedDate
+        }));
+      }
+    }
+  }, [me?.data]);
 
   const handleLogout = async () => {
     logout();
@@ -76,6 +92,15 @@ export default function SettingsPage() {
     setFormData(prev => ({
       ...prev,
       is_public: checked
+    }));
+  };
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Ensure the date is in the correct format (yyyy-MM-dd)
+    setFormData(prev => ({
+      ...prev,
+      date_of_birth: value
     }));
   };
 
@@ -130,6 +155,17 @@ export default function SettingsPage() {
                     setFormData((prev) => ({ ...prev, name: e.target.value }))
                   }
                   placeholder="Your name"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium mb-2 block">Date of Birth</label>
+                <Input
+                  type="date"
+                  value={formData.date_of_birth}
+                  onChange={handleDateChange}
+                  placeholder="Your date of birth"
+                  max={new Date().toISOString().split('T')[0]} // Prevent future dates
                 />
               </div>
 

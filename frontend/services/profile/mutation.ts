@@ -12,6 +12,7 @@ export const useUpdateProfile = () => {
             updateProfile(data, token),
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ["profile", data.id] });
+            queryClient.invalidateQueries({ queryKey: ["me"] });
             toast.success("Profile updated successfully");
         },
         onError: () => {

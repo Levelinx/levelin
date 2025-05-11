@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Copy, Trophy, Star, Zap, Target, Loader2 } from "lucide-react";
+import { Settings, Copy, Trophy, Star, Zap, Target, Loader2, Cake } from "lucide-react";
 import { useState } from "react";
 import { Post } from "@/components/post";
 import { useRouter } from "next/navigation";
@@ -101,6 +101,17 @@ export default function ProfilePage() {
     }
   };
 
+  // Format date of birth to a readable format
+  const formatDateOfBirth = (dateString: string | null) => {
+    if (!dateString) return "Not provided";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
   // Show loading state while fetching user data
   if (isLoading) {
     return (
@@ -121,9 +132,9 @@ export default function ProfilePage() {
 
   // Define user stats (these would ideally come from the API in the future)
   const userStats = {
-    challenges: 12,
-    reviews: 8,
-    reputation: 1500,
+    challenges: 0,
+    reviews: 0,
+    reputation: 0,
   };
 
   return (
@@ -161,6 +172,12 @@ export default function ProfilePage() {
               <span className="text-muted-foreground">reputation</span>
             </div>
           </div>
+          {user.date_of_birth && (
+            <div className="flex items-end gap-1 mt-2 text-muted-foreground text-sm">
+              <Cake className="h-5 w-5" />
+              <span>{formatDateOfBirth(user.date_of_birth)}</span>
+            </div>
+          )}
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUpdateProfile } from "@/services/profile/mutation";
 import { useGetUploadUrl } from "@/services/profile/mutation";
@@ -12,6 +12,7 @@ import { useMe } from "@/services/auth/query";
 import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const steps = [
     {
@@ -52,26 +53,57 @@ export default function Onboarding() {
     const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
     const { mutate: getUploadUrl } = useGetUploadUrl();
     const supabase = createClient();
-    // If user has completed profile, redirect to home
-    if (me?.data?.[0] && me.data[0].name && me.data[0].bio && me.data[0].avatar_url && me.data[0].date_of_birth) {
-        router.push("/");
-        return null;
-    }
 
     // Initialize form with existing data if available
-    if (me?.data?.[0] && !formData.name && !formData.bio && !formData.avatar_url && !formData.date_of_birth) {
-        setFormData({
-            name: me.data[0].name || "",
-            bio: me.data[0].bio || "",
-            date_of_birth: me.data[0].date_of_birth || "",
-            avatar_url: me.data[0].avatar_url || "",
-        });
-    }
+    useEffect(() => {
+        if (me?.data?.[0]) {
+            // If all required fields are already filled, redirect to home
+            if (me.data[0].name && me.data[0].bio && me.data[0].avatar_url && me.data[0].date_of_birth) {
+                router.push("/");
+                return;
+            }
+
+            const userData = me.data[0];
+            let formattedDate = "";
+            
+            // Format date_of_birth to yyyy-MM-dd if it exists
+            if (userData.date_of_birth) {
+                const dateObj = new Date(userData.date_of_birth);
+                if (!isNaN(dateObj.getTime())) {
+                    formattedDate = dateObj.toISOString().split('T')[0];
+                }
+            }
+            
+            setFormData({
+                name: userData.name || "",
+                bio: userData.bio || "",
+                date_of_birth: formattedDate,
+                avatar_url: userData.avatar_url || "",
+            });
+        }
+    }, [me, router]);
 
     const handleNext = () => {
+        // Validate current step data
+        if (currentStepData.id === "name" && !formData.name.trim()) {
+            toast.error("Please enter your name");
+            return;
+        }
+        
+        if (currentStepData.id === "bio" && !formData.bio.trim()) {
+            toast.error("Please enter a bio");
+            return;
+        }
+        
+        if (currentStepData.id === "date_of_birth" && !formData.date_of_birth) {
+            toast.error("Please enter your date of birth");
+            return;
+        }
+
         if (currentStep === steps.length - 1) {
-            // Ensure all required fields are present
+            // Final step - submit the form
             if (!formData.name || !formData.bio || !formData.date_of_birth || !formData.avatar_url) {
+                toast.error("Please complete all fields");
                 return;
             }
             
@@ -132,6 +164,14 @@ export default function Onboarding() {
 
     const currentStepData = steps[currentStep];
 
+    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setFormData(prev => ({
+            ...prev,
+            date_of_birth: value
+        }));
+    };
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-background">
             <div className="w-full max-w-md p-6">
@@ -176,6 +216,7 @@ export default function Onboarding() {
                                     }))
                                 }
                                 className="mb-4"
+                                required
                             />
                         )}
 
@@ -190,21 +231,24 @@ export default function Onboarding() {
                                     }))
                                 }
                                 className="mb-4"
+                                required
                             />
                         )}
 
                         {currentStepData.id === "date_of_birth" && (
-                            <Input
-                                type="date"
-                                value={formData.date_of_birth}
-                                onChange={(e) =>
-                                    setFormData((prev) => ({
-                                        ...prev,
-                                        date_of_birth: e.target.value,
-                                    }))
-                                }
-                                className="mb-4"
-                            />
+                            <div>
+                                <Input
+                                    type="date"
+                                    value={formData.date_of_birth}
+                                    onChange={handleDateChange}
+                                    className="mb-2"
+                                    max={new Date().toISOString().split('T')[0]} // Prevent future dates
+                                    required
+                                />
+                                <p className="text-xs text-muted-foreground">
+                                    Format: YYYY-MM-DD
+                                </p>
+                            </div>
                         )}
 
                         {currentStepData.id === "avatar" && (
@@ -214,6 +258,7 @@ export default function Onboarding() {
                                     accept="image/*"
                                     onChange={handleFileChange}
                                     disabled={isUploading}
+                                    required={!formData.avatar_url}
                                 />
                                 {isUploading && (
                                     <div className="flex items-center gap-2">
@@ -248,27 +293,15 @@ export default function Onboarding() {
                                 disabled={
                                     isUpdating ||
                                     isUploading ||
-                                    (currentStepData.id === "name" &&
-                                        !formData.name) ||
-                                    (currentStepData.id === "bio" &&
-                                        !formData.bio) ||
-                                    (currentStepData.id === "date_of_birth" &&
-                                        !formData.date_of_birth) ||
-                                    (currentStepData.id === "avatar" &&
-                                        !formData.avatar_url)
+                                    (currentStepData.id === "avatar" && !formData.avatar_url)
                                 }
-                                className="ml-auto"
+                                className={currentStep === 0 ? "w-full" : "ml-auto"}
                             >
-                                {isUpdating ? (
-                                    <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Saving...
-                                    </>
-                                ) : currentStep === steps.length - 1 ? (
-                                    "Complete"
-                                ) : (
-                                    "Next"
-                                )}
+                                {currentStep === steps.length - 1
+                                    ? isUpdating
+                                        ? "Saving..."
+                                        : "Complete"
+                                    : "Next"}
                             </Button>
                         </div>
                     </motion.div>
