@@ -17,7 +17,7 @@ export default function NewTargetPage() {
     difficulty: "beginner" as "beginner" | "intermediate" | "advanced",
     proof_requirements: "",
     deadline: "",
-    token_fee: 0,
+    token_amount: 0,
     media_urls: [""]
   });
 
@@ -43,7 +43,7 @@ export default function NewTargetPage() {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === "token_fee" ? parseFloat(value) : value
+      [name]: name === "token_amount" ? parseFloat(value) : value
     }));
   };
 
@@ -171,18 +171,18 @@ export default function NewTargetPage() {
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="token_fee" className="block font-medium">
+          <label htmlFor="token_amount" className="block font-medium">
             Token Fee
           </label>
           <input
-            id="token_fee"
-            name="token_fee"
+            id="token_amount"
+            name="token_amount"
             type="number"
             min="0"
             step="0.01"
             className="w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50"
             placeholder="Amount of tokens to stake"
-            value={formData.token_fee}
+            value={formData.token_amount}
             onChange={handleChange}
             required
           />
@@ -234,7 +234,7 @@ export default function NewTargetPage() {
             type="submit"
             className="bg-primary text-primary-foreground rounded-lg px-6 py-2 font-semibold hover:bg-primary/90 transition disabled:opacity-50"
             disabled={isPending || !formData.title || !formData.description || !formData.domain_id || 
-              !formData.proof_requirements || formData.token_fee <= 0 || !formData.deadline}
+              !formData.proof_requirements || formData.token_amount <= 0 || !formData.deadline}
           >
             {isPending ? "Creating..." : "Create Target"}
           </button>
