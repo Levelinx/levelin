@@ -25,12 +25,14 @@ const HeroSection: React.FC = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 mb-10">
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-levelin-500 to-levelin-600 hover:from-levelin-600 hover:to-levelin-700 text-white"
+              <a
+                className="bg-gradient-to-r from-levelin-500 to-levelin-600 hover:from-levelin-600 hover:to-levelin-700 text-white px-6 py-3 rounded-lg text-lg font-medium inline-block text-center"
+                href="https://web.levelin.fun"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 Try Beta
-              </Button>
+              </a>
               <Button
                 size="lg"
                 variant="outline"

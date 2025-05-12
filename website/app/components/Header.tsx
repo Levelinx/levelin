@@ -47,9 +47,14 @@ const Header: React.FC = () => {
         </nav>
 
         <div className="hidden md:flex items-center">
-          <Button className="bg-gradient-to-r from-levelin-500 to-levelin-600 hover:from-levelin-600 hover:to-levelin-700">
+          <a
+            className="bg-gradient-to-r from-levelin-500 to-levelin-600 hover:from-levelin-600 hover:to-levelin-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+            href="https://web.levelin.fun"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Try Beta
-          </Button>
+          </a>
         </div>
 
         {/* Mobile Menu Toggle */}
