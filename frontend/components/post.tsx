@@ -25,6 +25,7 @@ export interface Post {
     likes?: { count: number }[];
     replies?: { count: number }[];
     is_liked_by_me?: boolean;
+    like_count?: number;
 }
 
 interface PostProps {
@@ -71,7 +72,9 @@ export function Post({ post, showActions = true, inDetailPage = false }: PostPro
     
     // Local state for optimistic UI updates
     const [optimisticLikeCount, setOptimisticLikeCount] = useState(
-        post.likes && post.likes[0]?.count ? post.likes[0].count : 0
+        // Prefer the new like_count field if available, fall back to the old likes.count
+        post.like_count !== undefined ? post.like_count : 
+        (post.likes && post.likes[0]?.count ? post.likes[0].count : 0)
     );
     const [optimisticIsLiked, setOptimisticIsLiked] = useState(false);
 

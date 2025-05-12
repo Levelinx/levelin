@@ -18,12 +18,15 @@ export const getPosts = async (req: Request, res: Response) => {
     const { cursor, limit = 10 } = req.query;
     const privyId = req.headers.authorization ? req.user?.id || req.user?.privyId : null;
     
-    // Base query to get posts
+    // First get all posts
     let query = supabase
       .from('posts')
-      .select(`*, user:users(*),
+      .select(`
+        *,
+        user:users(*),
         likes:post_likes(count),
-        replies:posts(count)`, { count: 'exact' })
+        replies:posts(count)
+      `, { count: 'exact' })
       .is('parent_id', null)
       .order('created_at', { ascending: false })
       .limit(Number(limit));
@@ -35,6 +38,32 @@ export const getPosts = async (req: Request, res: Response) => {
     const { data, error, count } = await query;
     if (error) throw error;
     
+    // Get accurate like counts for all posts
+    const postIds = data.map(post => post.id);
+    
+    try {
+      const { data: likeCounts, error: countError } = await supabase
+        .from('post_likes_count')
+        .select('post_id, count')
+        .in('post_id', postIds);
+      
+      if (!countError && likeCounts) {
+        // Create a map of post_id -> like count
+        const likeCountMap: Record<string, number> = {};
+        likeCounts.forEach((item: any) => {
+          likeCountMap[item.post_id] = parseInt(item.count);
+        });
+        
+        // Update each post with the accurate like count
+        data.forEach(post => {
+          post.like_count = likeCountMap[post.id] || 0;
+        });
+      }
+    } catch (err) {
+      console.error("Error fetching like counts:", err);
+      // Continue without like counts if this fails
+    }
+    
     // If user is authenticated, check which posts they've liked
     if (privyId) {
       try {
@@ -42,7 +71,8 @@ export const getPosts = async (req: Request, res: Response) => {
         const { data: userLikes, error: likesError } = await supabase
           .from('post_likes')
           .select('post_id')
-          .eq('user_id', userId);
+          .eq('user_id', userId)
+          .in('post_id', postIds);
           
         if (!likesError && userLikes) {
           // Create a set of post IDs the user has liked for O(1) lookup
@@ -89,6 +119,35 @@ export const getPostById = async (req: Request, res: Response) => {
       .order('created_at', { ascending: true });
     if (repliesError) throw repliesError;
     
+    // Get accurate like counts for the main post and all replies
+    const allPostIds = [id, ...replies.map(reply => reply.id)];
+    
+    try {
+      const { data: likeCounts, error: countError } = await supabase
+        .from('post_likes_count')
+        .select('post_id, count')
+        .in('post_id', allPostIds);
+      
+      if (!countError && likeCounts) {
+        // Create a map of post_id -> like count
+        const likeCountMap: Record<string, number> = {};
+        likeCounts.forEach((item: any) => {
+          likeCountMap[item.post_id] = parseInt(item.count);
+        });
+        
+        // Update main post with accurate like count
+        post.like_count = likeCountMap[post.id] || 0;
+        
+        // Update each reply with accurate like count
+        replies.forEach(reply => {
+          reply.like_count = likeCountMap[reply.id] || 0;
+        });
+      }
+    } catch (err) {
+      console.error("Error fetching like counts:", err);
+      // Continue without like counts if this fails
+    }
+    
     // If user is authenticated, check which posts they've liked
     if (privyId) {
       try {
@@ -97,7 +156,7 @@ export const getPostById = async (req: Request, res: Response) => {
           .from('post_likes')
           .select('post_id')
           .eq('user_id', userId)
-          .in('post_id', [id, ...(replies.map(reply => reply.id) || [])]);
+          .in('post_id', allPostIds);
           
         if (!likesError && userLikes) {
           // Create a set of post IDs the user has liked for O(1) lookup
@@ -267,6 +326,32 @@ export const getUserPosts = async (req: Request, res: Response) => {
       .order('created_at', { ascending: false });
     if (error) throw error;
     
+    // Get accurate like counts for all posts
+    const postIds = data.map(post => post.id);
+    
+    try {
+      const { data: likeCounts, error: countError } = await supabase
+        .from('post_likes_count')
+        .select('post_id, count')
+        .in('post_id', postIds);
+      
+      if (!countError && likeCounts) {
+        // Create a map of post_id -> like count
+        const likeCountMap: Record<string, number> = {};
+        likeCounts.forEach((item: any) => {
+          likeCountMap[item.post_id] = parseInt(item.count);
+        });
+        
+        // Update each post with the accurate like count
+        data.forEach(post => {
+          post.like_count = likeCountMap[post.id] || 0;
+        });
+      }
+    } catch (err) {
+      console.error("Error fetching like counts:", err);
+      // Continue without like counts if this fails
+    }
+    
     // If user is authenticated, check which posts they've liked
     if (privyId) {
       try {
@@ -275,7 +360,7 @@ export const getUserPosts = async (req: Request, res: Response) => {
           .from('post_likes')
           .select('post_id')
           .eq('user_id', userId)
-          .in('post_id', data.map(post => post.id));
+          .in('post_id', postIds);
           
         if (!likesError && userLikes) {
           // Create a set of post IDs the user has liked for O(1) lookup

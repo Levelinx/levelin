@@ -18,6 +18,7 @@ export interface Post {
     likes: { count: number }[];
     replies: { count: number }[];
     is_liked_by_me?: boolean;
+    like_count?: number;
 }
 
 export interface GetPostsResponse {
