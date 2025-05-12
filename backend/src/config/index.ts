@@ -1,6 +1,4 @@
 import dotenv from 'dotenv';
-import privy from './privy';
-import supabase from './supabase';
 
 // Load environment variables
 dotenv.config();
@@ -18,6 +16,9 @@ if (!NODE_ENV || !PORT || !SUPABASE_URL || !SUPABASE_KEY || !SUPABASE_JWT_SECRET
   console.error('Missing environment variables');
 }
 
+import privy from './privy';
+import supabase from './supabase';
+
 export {
   NODE_ENV,
   PORT,
@@ -26,6 +27,6 @@ export {
   SUPABASE_JWT_SECRET,
   PRIVY_APP_ID,
   PRIVY_APP_SECRET,
-  supabase,
-  privy
+  privy,
+  supabase
 };
