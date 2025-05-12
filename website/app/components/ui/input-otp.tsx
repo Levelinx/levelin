@@ -5,7 +5,7 @@ import { Dot } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const InputOTP = React.forwardRef<
-  React.ElementRef<typeof OTPInput>,
+  HTMLDivElement,
   React.ComponentPropsWithoutRef<typeof OTPInput>
 >(({ className, containerClassName, ...props }, ref) => (
   <OTPInput
