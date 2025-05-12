@@ -16,11 +16,11 @@ const Header: React.FC = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/30 backdrop-blur-xl border-b border-border/20 transition-all duration-300">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-md bg-gradient-to-br from-levelin-400 to-levelin-600 flex items-center justify-center">
-            <span className="font-space-grotesk font-bold text-white text-xl">
-              L
-            </span>
-          </div>
+          <img
+            src="/images/logo2.0.png"
+            alt="Levelin Logo"
+            className="w-8 h-8"
+          />
           <span className="font-space-grotesk font-bold text-xl">Levelin</span>
         </Link>
 
