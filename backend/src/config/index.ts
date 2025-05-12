@@ -7,7 +7,7 @@ dotenv.config();
 const NODE_ENV = process.env.NODE_ENV as string;
 const PORT = process.env.PORT as string;
 const SUPABASE_URL = process.env.SUPABASE_URL || '';
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY || '';
+const SUPABASE_KEY = process.env.SUPABASE_KEY || '';
 const SUPABASE_JWT_SECRET = process.env.SUPABASE_JWT_SECRET as string;
 const PRIVY_APP_ID = process.env.PRIVY_APP_ID as string;
 const PRIVY_APP_SECRET = process.env.PRIVY_APP_SECRET as string;
