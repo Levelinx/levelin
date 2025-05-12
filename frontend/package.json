@@ -13,6 +13,7 @@
     "@privy-io/react-auth": "^2.13.0",
     "@project-serum/anchor": "^0.26.0",
     "@radix-ui/react-avatar": "^1.1.9",
+    "@radix-ui/react-dialog": "^1.1.13",
     "@radix-ui/react-label": "^2.1.6",
     "@radix-ui/react-select": "^2.2.4",
     "@radix-ui/react-separator": "^1.1.6",

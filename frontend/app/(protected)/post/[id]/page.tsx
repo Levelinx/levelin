@@ -109,7 +109,7 @@ export default function PostPage() {
             {isLoading || !post ? (
                 <PostSkeleton />
             ) : (
-                <Post post={post} showActions={false} />
+                <Post post={post} showActions={true} inDetailPage={true} />
             )}
 
             {/* Likes and comments count */}
@@ -154,7 +154,7 @@ export default function PostPage() {
                     // Actual comments
                     replies.map((reply) => (
                         <div key={reply.id} className="border-b">
-                            <Post post={reply} showActions={false} />
+                            <Post post={reply} showActions={true} inDetailPage={true} />
                         </div>
                     ))
                 )}

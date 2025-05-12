@@ -16,6 +16,9 @@ async function getUserIdFromPrivyId(privyId: string) {
 export const getPosts = async (req: Request, res: Response) => {
   try {
     const { cursor, limit = 10 } = req.query;
+    const privyId = req.headers.authorization ? req.user?.id || req.user?.privyId : null;
+    
+    // Base query to get posts
     let query = supabase
       .from('posts')
       .select(`*, user:users(*),
@@ -24,11 +27,38 @@ export const getPosts = async (req: Request, res: Response) => {
       .is('parent_id', null)
       .order('created_at', { ascending: false })
       .limit(Number(limit));
+    
     if (cursor) {
       query = query.lt('created_at', cursor);
     }
+    
     const { data, error, count } = await query;
     if (error) throw error;
+    
+    // If user is authenticated, check which posts they've liked
+    if (privyId) {
+      try {
+        const userId = await getUserIdFromPrivyId(privyId);
+        const { data: userLikes, error: likesError } = await supabase
+          .from('post_likes')
+          .select('post_id')
+          .eq('user_id', userId);
+          
+        if (!likesError && userLikes) {
+          // Create a set of post IDs the user has liked for O(1) lookup
+          const likedPostIds = new Set(userLikes.map(like => like.post_id));
+          
+          // Attach is_liked_by_me field to each post
+          data.forEach(post => {
+            post.is_liked_by_me = likedPostIds.has(post.id);
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching user likes:", err);
+        // Continue without likes data if this fails
+      }
+    }
+    
     res.json({ data, count });
   } catch (error) {
     res.status(500).json({ error: (error instanceof Error ? error.message : String(error)) });
@@ -39,6 +69,8 @@ export const getPosts = async (req: Request, res: Response) => {
 export const getPostById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    const privyId = req.headers.authorization ? req.user?.id || req.user?.privyId : null;
+    
     // Get main post
     const { data: post, error: postError } = await supabase
       .from('posts')
@@ -48,6 +80,7 @@ export const getPostById = async (req: Request, res: Response) => {
       .eq('id', id)
       .single();
     if (postError || !post) throw postError || new Error('Post not found');
+    
     // Get replies (flat, not nested)
     const { data: replies, error: repliesError } = await supabase
       .from('posts')
@@ -55,6 +88,35 @@ export const getPostById = async (req: Request, res: Response) => {
       .eq('parent_id', id)
       .order('created_at', { ascending: true });
     if (repliesError) throw repliesError;
+    
+    // If user is authenticated, check which posts they've liked
+    if (privyId) {
+      try {
+        const userId = await getUserIdFromPrivyId(privyId);
+        const { data: userLikes, error: likesError } = await supabase
+          .from('post_likes')
+          .select('post_id')
+          .eq('user_id', userId)
+          .in('post_id', [id, ...(replies.map(reply => reply.id) || [])]);
+          
+        if (!likesError && userLikes) {
+          // Create a set of post IDs the user has liked for O(1) lookup
+          const likedPostIds = new Set(userLikes.map(like => like.post_id));
+          
+          // Attach is_liked_by_me field to main post
+          post.is_liked_by_me = likedPostIds.has(post.id);
+          
+          // Attach is_liked_by_me field to each reply
+          replies.forEach(reply => {
+            reply.is_liked_by_me = likedPostIds.has(reply.id);
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching user likes:", err);
+        // Continue without likes data if this fails
+      }
+    }
+    
     res.json({ post, replies });
   } catch (error) {
     res.status(500).json({ error: (error instanceof Error ? error.message : String(error)) });
@@ -196,12 +258,40 @@ export const deletePost = async (req: Request, res: Response): Promise<void> => 
 export const getUserPosts = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    const privyId = req.headers.authorization ? req.user?.id || req.user?.privyId : null;
+    
     const { data, error } = await supabase
       .from('posts')
       .select('*, user:users(*), likes:post_likes(count), replies:posts(count)')
       .eq('user_id', id)
       .order('created_at', { ascending: false });
     if (error) throw error;
+    
+    // If user is authenticated, check which posts they've liked
+    if (privyId) {
+      try {
+        const userId = await getUserIdFromPrivyId(privyId);
+        const { data: userLikes, error: likesError } = await supabase
+          .from('post_likes')
+          .select('post_id')
+          .eq('user_id', userId)
+          .in('post_id', data.map(post => post.id));
+          
+        if (!likesError && userLikes) {
+          // Create a set of post IDs the user has liked for O(1) lookup
+          const likedPostIds = new Set(userLikes.map(like => like.post_id));
+          
+          // Attach is_liked_by_me field to each post
+          data.forEach(post => {
+            post.is_liked_by_me = likedPostIds.has(post.id);
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching user likes:", err);
+        // Continue without likes data if this fails
+      }
+    }
+    
     res.json({ data });
   } catch (error) {
     res.status(500).json({ error: (error instanceof Error ? error.message : String(error)) });
