@@ -18,8 +18,8 @@ export const createTargetSchema = z.object({
 export const getTargetsSchema = z.object({
     query: z.object({
         domain_id: z.string().uuid("Invalid domain ID").optional(),
-        status: z.enum(["open", "closed", "completed"], {
-            errorMap: () => ({ message: "Status must be open, closed, or completed" })
+        status: z.enum(["created", "accepted", "submitted", "reviewing", "completed", "finalized", "failed", "open"], {
+            errorMap: () => ({ message: "Invalid status value" })
         }).optional(),
         difficulty: z.enum(["beginner", "intermediate", "advanced"], {
             errorMap: () => ({ message: "Difficulty must be beginner, intermediate, or advanced" })

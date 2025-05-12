@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 
 export default function TargetsPage() {
   const [filter, setFilter] = useState<{
-    status?: "open" | "closed" | "completed";
+    status?: "created" | "accepted" | "submitted" | "reviewing" | "completed" | "finalized" | "failed" | "open";
     difficulty?: "beginner" | "intermediate" | "advanced";
   }>({});
   
@@ -42,9 +42,14 @@ export default function TargetsPage() {
             value={filter.status || "all"}
           >
             <option value="all">All</option>
+            <option value="created">Created</option>
             <option value="open">Open</option>
-            <option value="closed">Closed</option>
+            <option value="accepted">Accepted</option>
+            <option value="submitted">Submitted</option>
+            <option value="reviewing">Reviewing</option>
             <option value="completed">Completed</option>
+            <option value="finalized">Finalized</option>
+            <option value="failed">Failed</option>
           </select>
         </div>
 
@@ -86,8 +91,13 @@ export default function TargetsPage() {
                 <div className="bg-card rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow h-full p-6">
                   <div className="flex justify-between mb-3">
                     <span className={`px-2 py-1 rounded text-xs capitalize ${
-                      target.status === "open" ? "bg-green-100 text-green-800" :
+                      target.status === "created" || target.status === "open" ? "bg-green-100 text-green-800" :
+                      target.status === "accepted" ? "bg-emerald-100 text-emerald-800" :
+                      target.status === "submitted" ? "bg-yellow-100 text-yellow-800" :
+                      target.status === "reviewing" ? "bg-amber-100 text-amber-800" :
                       target.status === "completed" ? "bg-blue-100 text-blue-800" :
+                      target.status === "finalized" ? "bg-indigo-100 text-indigo-800" :
+                      target.status === "failed" ? "bg-red-100 text-red-800" :
                       "bg-gray-100 text-gray-800"
                     }`}>
                       {target.status}

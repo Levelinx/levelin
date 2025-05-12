@@ -135,8 +135,13 @@ export default function ProfilePage() {
                   <div className="bg-card rounded-lg p-4 hover:shadow-md transition-shadow h-full">
                     <div className="flex justify-between mb-2">
                       <span className={`px-2 py-1 rounded text-xs capitalize ${
-                        target.status === "open" ? "bg-green-100 text-green-800" :
+                        target.status === "created" || target.status === "open" ? "bg-green-100 text-green-800" :
+                        target.status === "accepted" ? "bg-emerald-100 text-emerald-800" :
+                        target.status === "submitted" ? "bg-yellow-100 text-yellow-800" :
+                        target.status === "reviewing" ? "bg-amber-100 text-amber-800" :
                         target.status === "completed" ? "bg-blue-100 text-blue-800" :
+                        target.status === "finalized" ? "bg-indigo-100 text-indigo-800" :
+                        target.status === "failed" ? "bg-red-100 text-red-800" :
                         "bg-gray-100 text-gray-800"
                       }`}>
                         {target.status}

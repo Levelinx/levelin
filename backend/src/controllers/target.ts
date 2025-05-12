@@ -38,7 +38,7 @@ export const createTarget = async (req: Request, res: Response): Promise<void> =
             deadline,
             token_amount,
             creator_id: userId,
-            status: 'open'
+            status: 'created'
         };
 
         const { data, error } = await supabase
@@ -122,7 +122,7 @@ export const submitTarget = async (req: Request, res: Response) => {
         const { target_id } = req.params;
         const { description, proof_url, media_urls, notes } = req.body;
 
-        // First check if target exists and is open
+        // First check if target exists and is open/created
         const { data: target, error: targetError } = await supabase
             .from("targets")
             .select("*")
@@ -134,8 +134,9 @@ export const submitTarget = async (req: Request, res: Response) => {
             return;
         }
 
-        if (target.status !== "open") {
-            res.status(400).json({ error: "Target is not open for submissions" });
+        // Check if target is available (either 'created' or 'open' status)
+        if (target.status !== 'created' && target.status !== 'open') {
+            res.status(400).json({ error: "Target is not available for submissions" });
             return;
         }
 
@@ -164,6 +165,13 @@ export const submitTarget = async (req: Request, res: Response) => {
             res.status(500).json({ error: error.message });
             return;
         }
+
+        // Update target status to 'submitted'
+        await supabase
+            .from("targets")
+            .update({ status: "submitted" })
+            .eq("id", target_id);
+
         res.status(201).json({ data });
     } catch (error) {
         console.error("Error submitting target:", error);
@@ -219,7 +227,7 @@ export const reviewSubmission = async (req: Request, res: Response) => {
             .update({ status })
             .eq("id", submission_id);
 
-        // If approved, update target status to completed
+        // If approved, update target status to 'completed'
         if (status === "approved") {
             await supabase
                 .from("targets")
@@ -228,6 +236,12 @@ export const reviewSubmission = async (req: Request, res: Response) => {
             
             // TODO: Trigger smart contract function to transfer tokens (1.5x) to the user
             // This would be handled separately in a blockchain integration module
+        } else if (status === "rejected") {
+            // If rejected, update target status back to 'created'
+            await supabase
+                .from("targets")
+                .update({ status: "created" })
+                .eq("id", submission.target_id);
         }
 
         res.status(201).json({ data });
