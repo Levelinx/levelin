@@ -9,7 +9,7 @@ import { Post, PostSkeleton } from "@/components/post";
 import { useProfile } from "@/services/profile/query";
 import { useUserPosts } from "@/services/posts/query";
 import { ProfileSkeleton } from "@/components/widgets/ProfileSkeleton";
-import { useUserTargets } from "@/services/target/query";
+import { useUserTargets } from "@/services/targetservice/query";
 import Link from "next/link";
 
 export default function ProfilePage() {

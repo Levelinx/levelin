@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { useUserTargets, useUserSubmissions } from "@/services/target/query";
+import { useUserTargets, useUserSubmissions } from "@/services/targetservice/query";
 import { motion } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 

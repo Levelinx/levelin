@@ -2,8 +2,8 @@
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { useTargetById } from "@/services/target/query";
-import { useSubmitTarget, useReviewSubmission } from "@/services/target/mutation";
+import { useTargetById } from "@/services/targetservice/query";
+import { useSubmitTarget, useReviewSubmission } from "@/services/targetservice/mutation";
 import { usePrivy } from "@privy-io/react-auth";
 
 export default function TargetDetailPage() {

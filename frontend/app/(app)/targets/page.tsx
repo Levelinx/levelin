@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { useTargets } from "@/services/target/query";
+import { useTargets } from "@/services/targetservice/query";
 import { motion } from "framer-motion";
 
 export default function TargetsPage() {
