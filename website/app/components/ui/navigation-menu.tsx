@@ -28,7 +28,6 @@ const NavigationMenuList = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.List>
 >(({ className, ...props }, ref) => (
   <NavigationMenuPrimitive.List
-    ref={ref}
     className={cn(
       "group flex flex-1 list-none items-center justify-center space-x-1",
       className
@@ -49,7 +48,6 @@ const NavigationMenuTrigger = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Trigger>
 >(({ className, children, ...props }, ref) => (
   <NavigationMenuPrimitive.Trigger
-    ref={ref}
     className={cn(navigationMenuTriggerStyle(), "group", className)}
     {...props}
   >
