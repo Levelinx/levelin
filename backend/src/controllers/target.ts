@@ -1,6 +1,5 @@
 import { supabase } from "../config";
 import { Request, Response } from "express";
-import { Target } from "../types/database.types";
 
 export const createTarget = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.user;
@@ -15,7 +14,7 @@ export const createTarget = async (req: Request, res: Response): Promise<void> =
         token_amount 
     } = req.body;
 
-    const newTarget: Omit<Target, 'id' | 'created_at' | 'updated_at'> = {
+    const newTarget = {
         title,
         description,
         domain_id,

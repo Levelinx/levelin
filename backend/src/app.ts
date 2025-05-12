@@ -7,10 +7,11 @@ import cors from 'cors';
 const app: Application = express();
 
 // Middleware
+console.log(process.env.NODE_ENV === 'production');
 app.use(cors({ 
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://web.levelin.fun', 'https://app.levelin.fun', 'http://localhost:3000']  // Include all production URLs
-    : true, // Allow all origins in development for easier testing
+    ? ['https://web.levelin.fun', 'http://localhost:3000']  // Include all production URLs
+    : ['http://localhost:3000'], // Allow all origins in development for easier testing
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'x-requested-with'],
