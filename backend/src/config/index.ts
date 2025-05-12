@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
-import { createClient } from '@supabase/supabase-js';
-import { Database } from '../types/database.types';
 import privy from './privy';
+import supabase from './supabase';
 
 // Load environment variables
 dotenv.config();
@@ -18,8 +17,6 @@ const PRIVY_APP_SECRET = process.env.PRIVY_APP_SECRET as string;
 if (!NODE_ENV || !PORT || !SUPABASE_URL || !SUPABASE_KEY || !SUPABASE_JWT_SECRET || !PRIVY_APP_ID || !PRIVY_APP_SECRET ) {
   console.error('Missing environment variables');
 }
-
-const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_KEY);
 
 export {
   NODE_ENV,
