@@ -12,7 +12,7 @@ import { useMe } from "@/services/auth/query";
 import { useUserPosts } from "@/services/posts/query";
 import { toast } from "sonner";
 
-const dummyChallenges = [
+const dummyTargets = [
   {
     id: 1,
     title: "Complete 5 Smart Contracts",
@@ -160,7 +160,7 @@ export default function ProfilePage() {
 
   // Define user stats (these would ideally come from the API in the future)
   const userStats = {
-    challenges: 0,
+    targets: 0,
     reviews: 0,
     reputation: 0,
   };
@@ -188,8 +188,8 @@ export default function ProfilePage() {
           <h1 className="text-2xl font-bold">{user.name}</h1>
           <div className="flex gap-4">
             <div>
-              <span className="font-semibold">{userStats.challenges}</span>{" "}
-              <span className="text-muted-foreground">challenges</span>
+              <span className="font-semibold">{userStats.targets}</span>{" "}
+              <span className="text-muted-foreground">targets</span>
             </div>
             <div>
               <span className="font-semibold">{userStats.reviews}</span>{" "}
@@ -218,7 +218,7 @@ export default function ProfilePage() {
       <Tabs defaultValue="posts" className="mb-8">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="posts">Posts</TabsTrigger>
-          <TabsTrigger value="challenges">Challenges</TabsTrigger>
+          <TabsTrigger value="targets">Targets</TabsTrigger>
           <TabsTrigger value="holdings">Holdings</TabsTrigger>
           <TabsTrigger value="achievements">Achievements</TabsTrigger>
         </TabsList>
@@ -252,22 +252,22 @@ export default function ProfilePage() {
           </div>
         </TabsContent>
 
-        <TabsContent value="challenges">
+        <TabsContent value="targets">
           <div className="space-y-4">
-            {dummyChallenges.map((challenge) => (
-              <Card key={challenge.id}>
+            {dummyTargets.map((target) => (
+              <Card key={target.id}>
                 <CardContent className="pt-6">
-                  <h3 className="font-semibold mb-2">{challenge.title}</h3>
+                  <h3 className="font-semibold mb-2">{target.title}</h3>
                   <div className="w-full bg-secondary h-2 rounded-full">
                     <div
                       className="bg-primary h-2 rounded-full"
                       style={{
-                        width: `${(challenge.progress / challenge.total) * 100}%`,
+                        width: `${(target.progress / target.total) * 100}%`,
                       }}
                     />
                   </div>
                   <p className="text-sm text-muted-foreground mt-2">
-                    {challenge.progress} / {challenge.total}
+                    {target.progress} / {target.total}
                   </p>
                 </CardContent>
               </Card>

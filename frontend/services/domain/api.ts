@@ -28,18 +28,18 @@ export async function createDomain(
     accessToken?: string
 ): Promise<CreateDomainResponse> {
     const api = getApi(accessToken);
-    const response = await api.post("/api/domain", data);
+    const response = await api.post("/api/domains", data);
     return response.data;
 }
 
 export async function getDomains(accessToken?: string): Promise<GetDomainsResponse> {
     const api = getApi(accessToken);
-    const response = await api.get("/api/domain");
+    const response = await api.get("/api/domains");
     return response.data;
 }
 
 export async function getDomain(id: string, accessToken?: string): Promise<GetDomainResponse> {
     const api = getApi(accessToken);
-    const response = await api.get(`/api/domain/${id}`);
+    const response = await api.get(`/api/domains/${id}`);
     return response.data;
 }

@@ -46,7 +46,7 @@ export default function NewPage() {
           whileHover={{ scale: 1.02 }}
           className="bg-card rounded-xl shadow-lg overflow-hidden border border-gray-300"
         >
-          <Link href="/new/challenge" className="block p-6">
+          <Link href="/new/target" className="block p-6">
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                 <svg
@@ -65,7 +65,7 @@ export default function NewPage() {
                 </svg>
               </div>
               <div>
-                <h3 className="text-xl font-semibold">Create Challenge</h3>
+                <h3 className="text-xl font-semibold">Create Target</h3>
                 <p className="text-muted-foreground mt-1">Set goals for yourself and earn tokens upon completion</p>
               </div>
             </div>
