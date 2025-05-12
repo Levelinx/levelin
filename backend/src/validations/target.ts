@@ -11,7 +11,7 @@ export const createTargetSchema = z.object({
         proof_requirements: z.string().min(1, "Proof requirements are required"),
         media_urls: z.array(z.string().url("Invalid URL")).optional(),
         deadline: z.string().datetime("Invalid date format").optional(),
-        token_amount: z.number().min(0, "Token amount must be positive")
+        token_fee: z.number().min(0, "Token fee must be positive")
     })
 });
 

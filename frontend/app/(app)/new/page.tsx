@@ -46,7 +46,7 @@ export default function NewPage() {
           whileHover={{ scale: 1.02 }}
           className="bg-card rounded-xl shadow-lg overflow-hidden border border-gray-300"
         >
-          <Link href="/new/target" className="block p-6">
+          <Link href="/new/new-target" className="block p-6">
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                 <svg

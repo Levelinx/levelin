@@ -9,7 +9,7 @@ export async function createTarget(
         proof_requirements: string;
         media_urls?: string[];
         deadline?: string;
-        token_amount: number;
+        token_fee: number;
     },
     accessToken?: string
 ) {
