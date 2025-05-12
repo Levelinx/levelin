@@ -1,5 +1,6 @@
 import { supabase } from "../config";
 import { Request, Response } from "express";
+import { Target } from "../types/database.types";
 
 export const createTarget = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.user;
@@ -14,24 +15,27 @@ export const createTarget = async (req: Request, res: Response): Promise<void> =
         token_amount 
     } = req.body;
 
+    const newTarget: Omit<Target, 'id' | 'created_at' | 'updated_at'> = {
+        title,
+        description,
+        domain_id,
+        difficulty,
+        proof_requirements,
+        media_urls,
+        deadline,
+        token_amount,
+        creator_id: id,
+        status: 'open'
+    };
+
     const { data, error } = await supabase
         .from("targets")
-        .insert({
-            title,
-            description,
-            domain_id,
-            difficulty,
-            proof_requirements,
-            media_urls,
-            deadline,
-            token_amount,
-            creator_id: id,
-            status: "open"
-        })
+        .insert(newTarget)
         .select()
         .single();
 
     if (error) {
+        console.error("Error creating target:", error);
         res.status(500).json({ error: error.message });
         return;
     }
