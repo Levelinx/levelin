@@ -5,6 +5,11 @@ import { useRouter } from "next/navigation";
 import { useCreateTarget } from "@/services/targetservice/mutation";
 import { useDomains } from "@/services/domain/query";
 
+interface Domain {
+  id: string;
+  name: string;
+}
+
 export default function NewTargetPage() {
   const router = useRouter();
   const { mutate: createTarget, isPending } = useCreateTarget();
@@ -129,7 +134,7 @@ export default function NewTargetPage() {
             required
           >
             <option value="">Select a domain</option>
-            {domains?.data?.map((domain: any) => (
+            {domains?.data?.map((domain: Domain) => (
               <option key={domain.id} value={domain.id}>
                 {domain.name}
               </option>
@@ -186,7 +191,7 @@ export default function NewTargetPage() {
             onChange={handleChange}
             required
           />
-          <p className="text-sm text-muted-foreground">You'll pay this amount to create this target. Successful completion will earn 1.5x this amount.</p>
+          <p className="text-sm text-muted-foreground">You&apos;ll pay this amount to create this target. Successful completion will earn 1.5x this amount.</p>
         </div>
 
         <div className="space-y-2">

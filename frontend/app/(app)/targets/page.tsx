@@ -4,6 +4,20 @@ import Link from "next/link";
 import { useTargets } from "@/services/targetservice/query";
 import { motion } from "framer-motion";
 
+interface Target {
+  id: string;
+  title: string;
+  description: string;
+  token_amount: number;
+  status: string;
+  difficulty: string;
+  creator: {
+    avatar_url: string;
+    name: string;
+  };
+  deadline: string;
+}
+
 export default function TargetsPage() {
   const [filter, setFilter] = useState<{
     status?: "created" | "accepted" | "submitted" | "reviewing" | "completed" | "finalized" | "failed" | "open";
@@ -80,7 +94,7 @@ export default function TargetsPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          {targets.map((target: any, index: number) => (
+          {targets.map((target: Target, index: number) => (
             <motion.div
               key={target.id}
               initial={{ opacity: 0, y: 20 }}

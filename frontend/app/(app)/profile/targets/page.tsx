@@ -1,9 +1,44 @@
 "use client";
-import { useState } from "react";
 import Link from "next/link";
 import { useUserTargets, useUserSubmissions } from "@/services/targetservice/query";
 import { motion } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+interface Target {
+  id: string;
+  title: string;
+  description: string;
+  token_amount: number;
+  deadline: string;
+  status: string;
+  difficulty: string;
+}
+
+interface User {
+  id: string;
+  name: string;
+  avatar_url: string;
+}
+
+interface Submission {
+  id: string;
+  target_id: string;
+  description: string;
+  status: string;
+  created_at: string;
+  reviews: Review[];
+  target: Target;
+  user: User;
+}
+
+interface Review {
+  id: string;
+  created_at: string;
+  status: string;
+  feedback: string;
+  target: Target;
+  user: User;
+}
 
 export default function UserTargetsPage() {
   const { data: targetsData, isLoading: isLoadingTargets } = useUserTargets();
@@ -37,7 +72,7 @@ export default function UserTargetsPage() {
             </div>
           ) : targets.length === 0 ? (
             <div className="text-center py-16 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700">
-              <h3 className="text-xl font-medium mb-2">You haven't created any targets yet</h3>
+              <h3 className="text-xl font-medium mb-2">You haven&apos;t created any targets yet</h3>
               <p className="text-gray-600 dark:text-gray-400">Create your first target to start tracking your goals</p>
               <Link 
                 href="/new/target" 
@@ -48,7 +83,7 @@ export default function UserTargetsPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {targets.map((target: any, index: number) => (
+              {targets.map((target: Target, index: number) => (
                 <motion.div
                   key={target.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -117,7 +152,7 @@ export default function UserTargetsPage() {
             </div>
           ) : submissions.length === 0 ? (
             <div className="text-center py-16 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700">
-              <h3 className="text-xl font-medium mb-2">You haven't submitted to any targets yet</h3>
+              <h3 className="text-xl font-medium mb-2">You haven&apos;t submitted to any targets yet</h3>
               <p className="text-gray-600 dark:text-gray-400">Browse targets and submit your proofs</p>
               <Link 
                 href="/targets" 
@@ -128,7 +163,7 @@ export default function UserTargetsPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {submissions.map((submission: any, index: number) => (
+              {submissions.map((submission: Submission, index: number) => (
                 <motion.div
                   key={submission.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -158,7 +193,7 @@ export default function UserTargetsPage() {
                       {submission.reviews && submission.reviews.length > 0 && (
                         <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
                           <h4 className="text-lg font-medium mb-3 text-gray-900 dark:text-gray-50">Review</h4>
-                          {submission.reviews.map((review: any) => (
+                          {submission.reviews.map((review: Review) => (
                             <div key={review.id} className="p-4 bg-gray-50 dark:bg-gray-900/30 rounded-lg border border-gray-200 dark:border-gray-700">
                               <div className="flex justify-between items-center mb-3">
                                 <span className="text-sm text-gray-500 dark:text-gray-400">

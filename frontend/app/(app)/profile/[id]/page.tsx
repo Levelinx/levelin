@@ -12,6 +12,16 @@ import { ProfileSkeleton } from "@/components/widgets/ProfileSkeleton";
 import { useUserTargets } from "@/services/targetservice/query";
 import Link from "next/link";
 
+interface Target {
+  id: string;
+  title: string;
+  description: string;
+  token_amount: number;
+  status: string;
+  deadline: string;
+  difficulty: string;
+}
+
 export default function ProfilePage() {
   const { id } = useParams();
   const router = useRouter();
@@ -130,7 +140,7 @@ export default function ProfilePage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {targets.map((target: any) => (
+              {targets.map((target: Target) => (
                 <Link href={`/targets/${target.id}`} key={target.id} className="block">
                   <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 p-5 border border-gray-200 dark:border-gray-700 hover:border-primary/30 dark:hover:border-primary/30">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-4">

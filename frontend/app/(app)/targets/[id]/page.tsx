@@ -6,6 +6,42 @@ import { useTargetById } from "@/services/targetservice/query";
 import { useSubmitTarget, useReviewSubmission } from "@/services/targetservice/mutation";
 import { usePrivy } from "@privy-io/react-auth";
 
+interface Target {
+  id: string;
+  title: string;
+  description: string;
+  token_amount: number;
+  deadline: string;
+}
+
+interface User {
+  id: string;
+  name: string;
+  avatar_url: string;
+}
+
+interface Submission {
+  id: string;
+  target_id: string;
+  description: string;
+  status: string;
+  user: User;
+  created_at: string;
+  proof_url: string;
+  media_urls: string[];
+  notes: string;
+  reviews: Review[];
+}
+
+interface Review {
+  id: string;
+  created_at: string;
+  status: string;
+  feedback: string;
+  target: Target;
+  user: User;
+}
+
 export default function TargetDetailPage() {
   const router = useRouter();
   const params = useParams();
@@ -354,7 +390,7 @@ export default function TargetDetailPage() {
           </div>
         ) : (
           <div className="space-y-6">
-            {submissions.map((submission: any) => (
+            {submissions.map((submission: Submission) => (
               <div key={submission.id} className="bg-white dark:bg-gray-800 rounded-xl p-7 border border-gray-200 dark:border-gray-700 shadow-sm">
                 <div className="flex justify-between items-start mb-5">
                   <div className="flex items-center">
@@ -444,7 +480,7 @@ export default function TargetDetailPage() {
                 {submission.reviews && submission.reviews.length > 0 && (
                   <div className="mt-6 pt-4 border-t">
                     <h4 className="font-medium mb-2">Review</h4>
-                    {submission.reviews.map((review: any) => (
+                    {submission.reviews.map((review: Review) => (
                       <div key={review.id} className="bg-gray-50 p-4 rounded">
                         <div className="flex justify-between items-center mb-2">
                           <span className="text-sm text-muted-foreground">
