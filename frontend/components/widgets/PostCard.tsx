@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Image from "next/image";
 
 export function PostCard({
   name,
@@ -36,7 +35,7 @@ export function PostCard({
     <div className="p-4 border-b">
       <div className="flex items-center gap-3">
         <div className="relative w-10 h-10 rounded-full overflow-hidden bg-muted">
-          <Image 
+          <img 
             src={imgError ? fallbackAvatar : imgSrc} 
             alt={name} 
             width={40}

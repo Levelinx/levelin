@@ -24,6 +24,7 @@ export default function NewPostPage() {
     
     // If user has a valid avatar URL that starts with http/https, use it
     if (user.avatar_url && (user.avatar_url.startsWith('https://') || user.avatar_url.startsWith('http://'))) {
+      console.log(user.avatar_url);
       return user.avatar_url;
     }
     
