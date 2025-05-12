@@ -11,7 +11,7 @@ const HeroSection: React.FC = () => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
-    
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -21,7 +21,7 @@ const HeroSection: React.FC = () => {
       {/* Enhanced Background effects */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-levelin-50/30 opacity-80 z-0" />
       <div className="absolute inset-0 bg-[url('/hero-pattern.svg')] opacity-15 hero-bg-animation z-0" />
-      
+
       {/* Animated gradient orbs */}
       <div className="absolute top-1/4 -left-64 w-96 h-96 rounded-full bg-gradient-to-r from-solana-purple/20 to-levelin-300/20 blur-3xl animate-blob" />
       <div className="absolute bottom-1/4 -right-64 w-96 h-96 rounded-full bg-gradient-to-l from-solana-green/20 to-levelin-200/20 blur-3xl animate-blob animation-delay-2000" />
@@ -33,23 +33,39 @@ const HeroSection: React.FC = () => {
             {/* Badge */}
             <div className="inline-flex items-center rounded-full bg-levelin-100/80 backdrop-blur-sm px-3 py-1 mb-6 border border-levelin-200/50">
               <Sparkles className="h-4 w-4 text-levelin-600 mr-2" />
-              <span className="text-sm font-medium text-levelin-700">Now in Public Beta</span>
+              <span className="text-sm font-medium text-levelin-700">
+                Now in Public Beta
+              </span>
             </div>
-            
+
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 font-space-grotesk leading-tight">
-              Prove Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-levelin-600 to-solana-purple animate-gradient-x">Expertise</span>,{" "}
+              Prove Your{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-levelin-600 to-solana-purple animate-gradient-x">
+                Expertise
+              </span>
+              ,{" "}
               <span className="relative inline-block">
                 On-Chain
-                <svg className="absolute -bottom-4 left-0 w-full" viewBox="0 0 200 12" xmlns="http://www.w3.org/2000/svg">
-                  <path 
-                    d="M0,0 Q50,25 100,0 Q150,25 200,0" 
-                    fill="none" 
-                    stroke="url(#lineGradient)" 
+                <svg
+                  className="absolute -bottom-4 left-0 w-full"
+                  viewBox="0 0 200 12"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M0,0 Q50,25 100,0 Q150,25 200,0"
+                    fill="none"
+                    stroke="url(#lineGradient)"
                     strokeWidth="5"
                     strokeLinecap="round"
                   />
                   <defs>
-                    <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <linearGradient
+                      id="lineGradient"
+                      x1="0%"
+                      y1="0%"
+                      x2="100%"
+                      y2="0%"
+                    >
                       <stop offset="0%" stopColor="#796EF6" />
                       <stop offset="100%" stopColor="#99F6E4" />
                     </linearGradient>
@@ -57,11 +73,19 @@ const HeroSection: React.FC = () => {
                 </svg>
               </span>
             </h1>
-            
+
             <p className="text-xl md:text-2xl mb-10 text-gray-700 dark:text-gray-300 max-w-xl leading-relaxed">
-              The decentralized proof of work platform where professionals 
-              <span className="text-levelin-700 font-medium"> build verifiable credentials</span> and 
-              <span className="text-levelin-700 font-medium"> earn on-chain reputation</span> on Solana.
+              The decentralized proof of work platform where professionals
+              <span className="text-levelin-700 font-medium">
+                {" "}
+                build verifiable credentials
+              </span>{" "}
+              and
+              <span className="text-levelin-700 font-medium">
+                {" "}
+                earn on-chain reputation
+              </span>{" "}
+              on Solana.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
@@ -72,17 +96,19 @@ const HeroSection: React.FC = () => {
                 rel="noopener noreferrer"
               >
                 <span className="relative z-10 inline-flex items-center">
-                  Try Beta <ExternalLink className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  Try Beta{" "}
+                  <ExternalLink className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </span>
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
               </a>
-              
+
               <Button
                 size="lg"
                 variant="outline"
                 className="border-2 border-levelin-300 text-levelin-600 hover:bg-levelin-100 px-8 py-4 rounded-2xl text-lg font-medium inline-flex items-center justify-center transition-all duration-300 group"
               >
-                Learn More <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                Learn More{" "}
+                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
             </div>
 
@@ -93,7 +119,10 @@ const HeroSection: React.FC = () => {
                 "Peer-reviewed Challenges",
                 "Immutable Credentials",
               ].map((feature, index) => (
-                <div key={index} className="flex items-center p-3 rounded-xl transition-all hover:bg-levelin-50 border border-transparent hover:border-levelin-100">
+                <div
+                  key={index}
+                  className="flex items-center p-3 rounded-xl transition-all hover:bg-levelin-50 border border-transparent hover:border-levelin-100"
+                >
                   <div className="h-10 w-10 rounded-lg bg-levelin-100 flex items-center justify-center mr-3">
                     <CheckCircle className="h-5 w-5 text-levelin-600" />
                   </div>
@@ -104,12 +133,14 @@ const HeroSection: React.FC = () => {
           </div>
 
           <div className="w-full lg:w-1/2 flex justify-center">
-            <div className={`relative transition-all duration-500 ${scrolled ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-95'}`}>
+            <div
+              className={`relative transition-all duration-500 ${scrolled ? "translate-y-0 opacity-100" : "translate-y-4 opacity-95"}`}
+            >
               {/* Enhanced UI element with 3D effect */}
               <div className="w-[340px] md:w-[480px] h-[340px] md:h-[480px] rounded-3xl bg-gradient-to-br from-white to-levelin-50 p-8 shadow-2xl backdrop-blur-card transform hover:scale-[1.02] transition-transform duration-500 relative overflow-hidden border border-levelin-200/20">
                 {/* Glass reflection effect */}
                 <div className="absolute -top-1/2 -right-1/2 w-full h-full bg-gradient-to-br from-white/40 to-transparent rounded-full opacity-30"></div>
-                
+
                 {/* Enhanced abstract patterns */}
                 <div className="absolute inset-0">
                   <svg
@@ -149,9 +180,19 @@ const HeroSection: React.FC = () => {
                           stopColor="rgba(153, 246, 228, 0.25)"
                         />
                       </linearGradient>
-                      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                      <filter
+                        id="glow"
+                        x="-50%"
+                        y="-50%"
+                        width="200%"
+                        height="200%"
+                      >
                         <feGaussianBlur stdDeviation="5" result="blur" />
-                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                        <feComposite
+                          in="SourceGraphic"
+                          in2="blur"
+                          operator="over"
+                        />
                       </filter>
                     </defs>
                     <rect width="100" height="100" fill="url(#grid)" />
@@ -194,7 +235,7 @@ const HeroSection: React.FC = () => {
                       <div className="w-8 h-8 rounded-full bg-white/40 border border-levelin-200/30"></div>
                     </div>
                   </div>
-                  
+
                   {/* User profile section */}
                   <div className="flex gap-4 mb-8 p-4 rounded-xl bg-white/40 border border-levelin-200/30 backdrop-blur-md">
                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-levelin-300 to-levelin-500 p-0.5">
@@ -206,16 +247,23 @@ const HeroSection: React.FC = () => {
                       <div className="h-5 w-3/5 bg-levelin-500/30 rounded-md mb-2"></div>
                       <div className="h-4 w-4/5 bg-levelin-400/20 rounded-md mb-3"></div>
                       <div className="flex gap-2">
-                        <div className="px-3 py-1 rounded-full bg-levelin-100/50 border border-levelin-200/30 text-xs text-levelin-700 font-medium">Level 3</div>
-                        <div className="px-3 py-1 rounded-full bg-solana-purple/10 border border-solana-purple/20 text-xs text-solana-purple font-medium">Developer</div>
+                        <div className="px-3 py-1 rounded-full bg-levelin-100/50 border border-levelin-200/30 text-xs text-levelin-700 font-medium">
+                          Level 3
+                        </div>
+                        <div className="px-3 py-1 rounded-full bg-solana-purple/10 border border-solana-purple/20 text-xs text-solana-purple font-medium">
+                          Developer
+                        </div>
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Challenge cards */}
                   <div className="space-y-4">
                     {[1, 2, 3].map((item) => (
-                      <div key={item} className="p-4 bg-white/40 rounded-xl border border-levelin-200/30 backdrop-blur-md hover:shadow-md transition-all duration-300 hover:bg-white/60 group">
+                      <div
+                        key={item}
+                        className="p-4 bg-white/40 rounded-xl border border-levelin-200/30 backdrop-blur-md hover:shadow-md transition-all duration-300 hover:bg-white/60 group"
+                      >
                         <div className="flex justify-between items-start mb-2">
                           <div className="h-5 w-2/5 bg-levelin-500/30 rounded-md"></div>
                           <div className="h-6 w-6 rounded-full bg-levelin-100 flex items-center justify-center">
@@ -247,52 +295,112 @@ const HeroSection: React.FC = () => {
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-solana-green/5 to-transparent rounded-2xl overflow-hidden">
                   <svg width="100%" height="100%" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="30" fill="rgba(153, 246, 228, 0.15)" />
-                    <circle cx="50" cy="50" r="20" fill="rgba(153, 246, 228, 0.1)" />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="30"
+                      fill="rgba(153, 246, 228, 0.15)"
+                    />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="20"
+                      fill="rgba(153, 246, 228, 0.1)"
+                    />
                   </svg>
                 </div>
               </div>
-              
+
               <div
                 className="absolute -bottom-10 -right-10 w-40 h-40 rounded-2xl bg-solana-purple/10 backdrop-blur-md border border-solana-purple/20 animate-float shadow-lg"
                 style={{ animationDelay: "1s" }}
               >
                 <div className="absolute inset-0 bg-gradient-to-tl from-solana-purple/5 to-transparent rounded-2xl overflow-hidden">
                   <svg width="100%" height="100%" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="30" fill="rgba(121, 110, 246, 0.15)" />
-                    <circle cx="50" cy="50" r="20" fill="rgba(121, 110, 246, 0.1)" />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="30"
+                      fill="rgba(121, 110, 246, 0.15)"
+                    />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="20"
+                      fill="rgba(121, 110, 246, 0.1)"
+                    />
                   </svg>
                 </div>
               </div>
-              
+
               <div
                 className="absolute top-1/2 -right-14 transform -translate-y-1/2 w-24 h-24 rounded-full bg-levelin-400/10 backdrop-blur-md border border-levelin-400/20 animate-float shadow-lg"
                 style={{ animationDelay: "1.5s" }}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-levelin-400/5 to-transparent rounded-full overflow-hidden">
                   <svg width="100%" height="100%" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="30" fill="rgba(121, 110, 246, 0.1)" />
-                    <circle cx="50" cy="50" r="20" fill="rgba(121, 110, 246, 0.05)" />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="30"
+                      fill="rgba(121, 110, 246, 0.1)"
+                    />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="20"
+                      fill="rgba(121, 110, 246, 0.05)"
+                    />
                   </svg>
                 </div>
               </div>
-              
+
               {/* Rust Code snippet decoration */}
               <div className="absolute -bottom-4 left-1/4 transform rotate-6 w-56 h-36 rounded-lg bg-gray-800/90 backdrop-blur-md border border-gray-700 shadow-lg overflow-hidden">
                 <div className="p-3 text-xs font-mono">
-                  <div className="text-blue-400">use <span className="text-green-300">solana_program</span>::<span className="text-gray-300">{"{"}</span><span className="text-yellow-300">account_info::AccountInfo</span>, <span className="text-yellow-300">pubkey::Pubkey</span><span className="text-gray-300">{"}"}</span>;</div>
-                  <div className="text-purple-400 mt-1">pub <span className="text-blue-400">fn</span> <span className="text-yellow-300">verify_credential</span><span className="text-gray-300">(</span></div>
-                  <div className="text-gray-300 ml-4"><span className="text-orange-300">program_id</span>: &<span className="text-blue-400">Pubkey</span>,</div>
-                  <div className="text-gray-300 ml-4"><span className="text-orange-300">accounts</span>: &[<span className="text-blue-400">AccountInfo</span>]</div>
-                  <div className="text-gray-300"><span>)</span> -> <span className="text-blue-400">Result</span><span className="text-gray-300">{"<"}</span><span className="text-green-300">bool</span>, <span className="text-purple-400">ProgramError</span><span className="text-gray-300">{">"}</span> {"{"}</div>
-                  <div className="text-gray-300 ml-4"><span className="text-blue-400">Ok</span><span className="text-gray-300">(</span><span className="text-orange-300">true</span><span className="text-gray-300">)</span></div>
+                  <div className="text-blue-400">
+                    use <span className="text-green-300">solana_program</span>::
+                    <span className="text-gray-300">{"{"}</span>
+                    <span className="text-yellow-300">
+                      account_info::AccountInfo
+                    </span>
+                    , <span className="text-yellow-300">pubkey::Pubkey</span>
+                    <span className="text-gray-300">{"}"}</span>;
+                  </div>
+                  <div className="text-purple-400 mt-1">
+                    pub <span className="text-blue-400">fn</span>{" "}
+                    <span className="text-yellow-300">verify_credential</span>
+                    <span className="text-gray-300">(</span>
+                  </div>
+                  <div className="text-gray-300 ml-4">
+                    <span className="text-orange-300">program_id</span>: &
+                    <span className="text-blue-400">Pubkey</span>,
+                  </div>
+                  <div className="text-gray-300 ml-4">
+                    <span className="text-orange-300">accounts</span>: &[
+                    <span className="text-blue-400">AccountInfo</span>]
+                  </div>
+                  <div className="text-gray-300">
+                    <span>)</span> -&#62;{" "}
+                    <span className="text-blue-400">Result</span>
+                    <span className="text-gray-300">{"<"}</span>
+                    <span className="text-green-300">bool</span>,{" "}
+                    <span className="text-purple-400">ProgramError</span>
+                    <span className="text-gray-300">{">"}</span> {"{"}
+                  </div>
+                  <div className="text-gray-300 ml-4">
+                    <span className="text-blue-400">Ok</span>
+                    <span className="text-gray-300">(</span>
+                    <span className="text-orange-300">true</span>
+                    <span className="text-gray-300">)</span>
+                  </div>
                   <div className="text-gray-300">{"}"}</div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        
+
         {/* Trusted by section
         <div className="mt-20 text-center">
           <div className="w-full h-px bg-gradient-to-r from-transparent via-levelin-200/50 to-transparent mb-12"></div>
