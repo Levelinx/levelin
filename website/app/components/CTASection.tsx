@@ -17,7 +17,6 @@ const CTASection: React.FC = () => {
     toast({
       title: "Thank you for joining our beta!",
       description: "We'll be in touch with next steps soon.",
-      duration: 5000,
     });
 
     setEmail("");
