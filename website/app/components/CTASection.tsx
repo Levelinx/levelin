@@ -114,7 +114,7 @@ const CTASection: React.FC = () => {
           </div>
         </div>
 
-        {/* Social proof */}
+        {/* Social proof
         <div className="mt-12 text-center">
           <p className="text-gray-500 mb-4 text-sm font-medium">
             TRUSTED BY DEVELOPERS FROM
@@ -141,7 +141,7 @@ const CTASection: React.FC = () => {
               className="h-8"
             />
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );
